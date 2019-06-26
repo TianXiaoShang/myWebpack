@@ -22,18 +22,19 @@ module.exports = {
     // mode:"production",       //生产版本，代码将被压缩(默认为production)
     mode: "development",         //开发版本，代码不被压缩；
     devtool: 'cheap-module-eval-source-map',         //源映射;在打包后的代码中对源代码进行映射便于报错时候的行数快速定位
+    // devtool: 'cheap-module-source-map',           //生产环境推荐用这种
     //总结来讲，development推荐cheap-module-eval-source-map，production推荐cheap-module-source-map（线上环境有正确的报错也便于调试，当然如果你完全不需要在线上定位报错则用none或者直接注释掉即可）
     //值得注意的是，不管使用哪种模式，当有产生.map文件时，.map文件只会在F12开启时进行下载（sourceMap主要服务于调试），所以其实更推荐使用单独生成.map文件的形式。否则放到js中会增加代码体积，也就是说避免使用inline
     //none，不触发sourceMap（拓展：https://www.cnblogs.com/chris-oil/p/8856020.html）
     //source-map进行源代码映射可以在报错中正确显示其在源代码中的行数，但会导致打包速度变慢，因为需要生成映射map文件
     //inline-source-map,跟source-map唯一不同的是不会单独生成map文件，会以base64格式放在打包后的js中；
-    //cheap-inline-source-map,只会告诉你第几行，不会告诉你第几列（或者说第几个字符）出错，省性能；
+    //cheap-inline-source-map,加上cheap则只会告诉你第几行，不会告诉你第几列（或者说第几个字符）出错，省性能；
     //cheap-module-inline-source-map,加上module代表不止管业务代码，依赖的包中的报错也能帮你定位；
     //eval，不生成map文件，以eval的方式生成对应关系，性能最佳，但是提示信息不够全；
 
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
-            {
+            {   //file-loader
                 test: /\.css$/,                      //css-loader负责整理css依赖文件，styles-loader负责挂载到html；
                 use: [
                     // 'style-loader', 
@@ -47,19 +48,39 @@ module.exports = {
                     },
                 ]
             },
-            {
-                test: /\.styl$/,                    //stylus文件编译成普通css文件(npm i stylus stylus-loader --save)
+            {   //file-loader
+                test: /\.(eot|ttf|svg|woff|woff2)$/, //字体文件用file-loader
+                use: {
+                    loader:'file-loader'             //只需要使用file转移到输出目录即可
+                }
+            },
+            {   //stylus-loader
+                test: /\.styl$/,                     //stylus文件编译成普通css文件(npm i stylus stylus-loader --save)
                 use: [
                     'style-loader',
                     {
                         loader: 'css-loader',
                         options: {
-                            importLoaders: 2,       //这个配置为了防止在stylus文件中使用@import引入新的文件，不会再走下面的stylus-loader等两个loader环节引发的问题
-                            // modules: true        //使用模块化css，使用之后需要通过import style from 'xxx';img.calssList.add(style.avatar)这样的方式针对局部使用该样式文件；目的是不影响全局样式
+                            importLoaders: 2,       //这个配置为了防止在stylus文件中嵌套的使用@import引入新的文件，不会再走下面的stylus-loader等两个loader环节引发的问题
+                            // modules: true        //使用模块化css，使用之后需要通过import style from 'xxx';img.calssList.add(style.avatar)这样的方式针对局部使用该样式文件；目的是不影响全局样式，鸡肋！
                         }
                     },
-                    'postcss-loader',               //这种写法需要另建postcss.config.js文件来配置，不如上方直接在options中配置
-                    'stylus-loader'                 //npm i stylus stylus-loader --save
+                    'stylus-loader',                //npm i stylus stylus-loader --save
+                    'postcss-loader'                //这种写法需要另建postcss.config.js文件来配置，不如上方直接在options中配置
+                ]
+            },
+            {   //sass-loader
+                test: /\.scss$/,                    //scss编译，同理stylus！
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 2,       
+                        }
+                    },
+                    'sass-loader',                  
+                    'postcss-loader'              
                 ]
             },
             {   //url-loader   内置了file-loader，当超过limit规定的大小，则使用file-loader，会将匹配的文件复制到规定的imgs目录
@@ -80,15 +101,20 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',                  //使用babel-loader，但是它只是一个桥梁，真正进行语法编译降级的是下面的@babel/preset-env  （npm install --save-dev babel-loader @babel/core）
                     // 这里把options注释是因为建立了一个.babelrc文件在根目录，可以自动实用其中的配置，在babelrc文件中我配置使用了第一套配置，可以打开查看详情；
-                    
+
                     // options: {
                     //     // 两套配置，总结来讲业务代码推荐用第一种套餐搭配，写一些插件以及类库为了防止变量污染则建议使用下面的runtime的plugin！
-                    //     presets: [['@babel/preset-env', {         //使用preset-env进行语法降级（另外还需要配合@babel/polyfill（在index.js中使用）进行低版本浏览器不存在的一些特性弥补才能真正实现全部语法兼容）   npm install @babel/preset-env --save-dev
-                    //         useBuiltIns: 'usage',                 //import "@babel/polyfill"进行特性弥补时会弥补所有的高级语法，通过usage配置，则只会弥补代码中有使用到的需要弥补的语法特性，从而减少打包后的文件体积；
-                    //         // targets:{                            //通过浏览器版本进行语法过滤，一般来讲你不知道用户会使用什么浏览器的情况，就注释掉吧！
-                    //         //     chrome:'67'                      //这里用于配置你的代码所使用的的浏览器环境，让webpack自动的根据浏览器支持情况进行决定是否有必要进行代码降级等！在当前配置的浏览器版本支持对应语法的情况下不需要再进行降级，弥补等操作，达到节省性能以及减少代码体积的效果；
-                    //         // }
-                    //     }]],                                 
+                    //     presets: [
+                    //         [
+                    //             '@babel/preset-env', {         //使用preset-env进行语法降级（另外还需要配合@babel/polyfill（在index.js中使用）进行低版本浏览器不存在的一些特性弥补才能真正实现全部语法兼容）   npm install @babel/preset-env --save-dev
+                    //                 useBuiltIns: 'usage',                 //import "@babel/polyfill"进行特性弥补时会弥补所有的高级语法，通过usage配置，则只会弥补代码中有使用到的需要弥补的语法特性，从而减少打包后的文件体积；
+                    //                 // targets:{                          //通过浏览器版本进行语法过滤，一般来讲你不知道用户会使用什么浏览器的情况，就注释掉吧！
+                    //                 //     chrome:'67'                    //这里用于配置你的代码所使用的的浏览器环境，让webpack自动的根据浏览器支持情况进行决定是否有必要进行代码降级等！在当前配置的浏览器版本支持对应语法的情况下不需要再进行降级，弥补等操作，达到节省性能以及减少代码体积的效果；
+                    //                 // }
+                    //             }
+                    //         ],
+                    //         // "@babel/preset-react"              //preser-react解析react代码；当然这里并没有使用到react；
+                    //     ],
 
                     //     // 写插件、类库等推荐该方法，有效防止变量污染；上面的搭配套餐中的polyfill会存在变量污染的问题；
                     //     // "plugins": [["@babel/plugin-transform-runtime", {    //  npm install --save @babel/runtime
@@ -142,7 +168,7 @@ module.exports = {
 
     // 使用webpack提供的devserver(npm install webpack-dev-server -D)
     devServer: {
-        port: '8082',                                    //修改端口号
+        port: '8082',                                    //配置端口号
         contentBase: 'dist',                             //配置开启的服务器的根路径为当前路径下的dist文件夹
         hot: true,                                       //开启HMR的热更新，
         hotOnly: true,                                   //配合hot使用，阻止更改代码后自动刷新，即使HMR没有生效；
