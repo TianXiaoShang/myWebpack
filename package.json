@@ -5,15 +5,18 @@
   "main": "index.js",
   "scripts": {
     "bundle": "webpack",
+    "watch": "webpack --watch",
     "start": "webpack --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack-dev-server --open"
+    "dev": "webpack-dev-server --open",
+    "middleware": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "autoprefixer": "^9.6.0",
     "babel-loader": "^8.0.6",
@@ -41,5 +44,8 @@
     "last 5 version",
     ">1%"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "@babel/runtime": "^7.4.5",
+    "@babel/runtime-corejs2": "^7.4.5"
+  }
 }
