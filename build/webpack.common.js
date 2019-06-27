@@ -1,9 +1,6 @@
 const PurifyCSSPlugin = require('purifycss-webpack')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default
 const glob = require('glob-all')
-// const Webpack = require('webpack');       
-const autoprefixer = require('autoprefixer')
 const path = require("path")
 // 这里的公共配置，用npm i webpack-merge -D 分别合并到dev跟pro两个模式，达到代码复用
 
@@ -18,20 +15,6 @@ module.exports = {
     },
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
-            {   //file-loader
-                test: /\.css$/,                      //css-loader负责整理css依赖文件，styles-loader负责挂载到html；
-                use: [
-                    // 'style-loader', 
-                    MiniCssExtractPlugin.loader,     //该插件代替style-loader，作用是单独抽离css文件，而不是放在head的style标签中
-                    'css-loader',                    //在css中不会引入stylus跟scss等，则无需关注importLoaders配置的问题；
-                    {
-                        loader: 'postcss-loader',    //这里的添加厂商前缀插件的方法跟下面styl写法不同，作用一样
-                        options: {                   //需要的参数，放入需要依赖的厂商前缀插件
-                            plugins: [autoprefixer]
-                        }
-                    },
-                ]
-            },
             {   //file-loader
                 test: /\.(eot|ttf|svg|woff|woff2)$/, //字体文件用file-loader
                 use: {
@@ -122,9 +105,6 @@ module.exports = {
         ],
     },
     plugins: [
-        new MiniCssExtractPlugin({
-            filename: 'css/[name]_[hash].css',          //除了给css命名，还可以增加路径（这里给css创建一个单独的css文件夹）
-        }),
         new PurifyCSSPlugin({
             // Give paths to parse for rules. These should be absolute!
             paths: glob.sync([
@@ -132,19 +112,6 @@ module.exports = {
                 path.join(__dirname, './src/js/*.js')   //匹配js文件
             ]),
         }),
-        // new Webpack.optimize.UglifyJsPlugin({
-        //     compress: {
-        //         //删除无用代码时不输出警告  
-        //         warnings: false, // 禁止压缩时候的警告信息，给用户一种vue高大上没有错误的感觉
-        //         //删除console语句
-        //         drop_console: true
-        //     },
-        //     //删除注释
-        //     comments: false,
-        //     mangle: false,
-        //     // 压缩后生成map文件
-        //     sourceMap: true
-        // }),
         new WebpackDeepScopeAnalysisPlugin(),
     ],
 }
