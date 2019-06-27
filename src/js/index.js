@@ -1,6 +1,6 @@
 require('../css/index.css');        //两种模块化规范都可以
 import '../css/myStylus.styl';      //两种模块化规范都可以
-import "@babel/polyfill"            //配合babel-lader进行一些高级语法转低级语法的弥补(一些低版本浏览器不存在的特性)；
+// import "@babel/polyfill"         //配合babel-lader进行一些高级语法转低级语法的弥补(一些低版本浏览器不存在的特性),而事实上我们配置了"useBuiltIns": "usage" 后会自动引入到业务代码，业务代码中我们不用手动引入！
 const $ = require('jquery');
 
 $('.tab-item').on('click', function (e) {
@@ -62,8 +62,5 @@ function scrollStart(y) {
         }
     },1);
 }
-
-
-
 
 console.log(1)
