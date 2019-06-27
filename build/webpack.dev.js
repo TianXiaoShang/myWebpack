@@ -24,6 +24,22 @@ const devConfig = {
                     },
                 ]
             },
+            {   //stylus-loader
+                test: /\.styl$/,                     //stylus文件编译成普通css文件(npm i stylus stylus-loader --save)
+                use: [
+                    'style-loader',
+                    // MiniCssExtractPlugin.loader,        //该插件只能在production模式使用，用于代替style-loader，作用是单独抽离css文件，而不是放在head的style标签中；
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 2,       //这个配置为了防止在stylus文件中嵌套的使用@import引入新的文件，不会再走下面的stylus-loader等两个loader环节引发的问题
+                            // modules: true        //使用模块化css，使用之后需要通过import style from 'xxx';img.calssList.add(style.avatar)这样的方式针对局部使用该样式文件；目的是不影响全局样式，鸡肋！
+                        }
+                    },
+                    'postcss-loader',               //这种写法需要另建postcss.config.js文件来配置，不如上方直接在options中配置
+                    'stylus-loader'                 //npm i stylus stylus-loader --save
+                ]
+            }
         ],
     },
     plugins: [
@@ -45,7 +61,7 @@ const devConfig = {
 
     // 使用webpack提供的devserver(npm install webpack-dev-server -D)
     devServer: {
-        port: '8082',                                    //配置端口号
+        port: '8083',                                    //配置端口号
         contentBase: 'dist',                             //配置开启的服务器的根路径为当前路径下的dist文件夹
         hot: true,                                       //开启HMR的热更新，
         // hotOnly: true,                                //配合hot使用，阻止更改代码后自动刷新，即使HMR没有生效；(建议关闭，对于js更新不友好，一般来讲js改变后我希望刷新页面)
