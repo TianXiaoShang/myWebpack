@@ -19,18 +19,19 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),              //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
         filename: "js/[name]_[hash].boundle.js"             //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；
     },
-    // mode:"production",       //生产版本，代码将被压缩(默认为production)
-    mode: "development",         //开发版本，代码不被压缩；
-    devtool: 'cheap-module-eval-source-map',         //源映射;在打包后的代码中对源代码进行映射便于报错时候的行数快速定位
+
+    // mode:"production",         //生产版本，代码将被压缩(默认为production)
+    mode: "development",          //开发版本，代码不被压缩；
     // devtool: 'cheap-module-source-map',           //生产环境推荐用这种
-        //总结来讲，development推荐cheap-module-eval-source-map，production推荐cheap-module-source-map（线上环境有正确的报错也便于调试，当然如果你完全不需要在线上定位报错则用none或者直接注释掉即可）
-        //值得注意的是，不管使用哪种模式，当有产生.map文件时，.map文件只会在F12开启时进行下载（sourceMap主要服务于调试），所以其实更推荐使用单独生成.map文件的形式。否则放到js中会增加代码体积，也就是说避免使用inline
-        //none，不触发sourceMap（拓展：https://www.cnblogs.com/chris-oil/p/8856020.html）
-        //source-map进行源代码映射可以在报错中正确显示其在源代码中的行数，但会导致打包速度变慢，因为需要生成映射map文件
-        //inline-source-map,跟source-map唯一不同的是不会单独生成map文件，会以base64格式放在打包后的js中；
-        //cheap-inline-source-map,加上cheap则只会告诉你第几行，不会告诉你第几列（或者说第几个字符）出错，省性能；
-        //cheap-module-inline-source-map,加上module代表不止管业务代码，依赖的包中的报错也能帮你定位；
-        //eval，不生成map文件，以eval的方式生成对应关系，性能最佳，但是提示信息不够全；
+    devtool: 'cheap-module-eval-source-map',         //源映射;在打包后的代码中对源代码进行映射便于报错时候的行数快速定位
+    //总结来讲，development推荐cheap-module-eval-source-map，production推荐cheap-module-source-map（线上环境有正确的报错也便于调试，当然如果你完全不需要在线上定位报错则用none或者直接注释掉即可）
+    //值得注意的是，不管使用哪种模式，当有产生.map文件时，.map文件只会在F12开启时进行下载（sourceMap主要服务于调试），所以其实更推荐使用单独生成.map文件的形式。否则放到js中会增加代码体积，也就是说避免使用inline
+    //none，不触发sourceMap（拓展：https://www.cnblogs.com/chris-oil/p/8856020.html）
+    //source-map进行源代码映射可以在报错中正确显示其在源代码中的行数，但会导致打包速度变慢，因为需要生成映射map文件
+    //inline-source-map,跟source-map唯一不同的是不会单独生成map文件，会以base64格式放在打包后的js中；
+    //cheap-inline-source-map,加上cheap则只会告诉你第几行，不会告诉你第几列（或者说第几个字符）出错，省性能；
+    //cheap-module-inline-source-map,加上module代表不止管业务代码，依赖的包中的报错也能帮你定位；
+    //eval，不生成map文件，以eval的方式生成对应关系，性能最佳，但是提示信息不够全；
 
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
@@ -53,8 +54,7 @@ module.exports = {
                 use: {
                     loader:'file-loader',            //只需要使用file转移到输出目录即可
                     options:{
-                        // publicPath:'',
-                        outputPath:'font/'           //打包后创建并放入一个font的文件夹中便于管理
+                        outputPath:'font/'          //打包放入font文件夹
                     }
                 }
             },
@@ -85,8 +85,8 @@ module.exports = {
                             importLoaders: 2,       
                         }
                     },
-                    'postcss-loader',             
-                    'sass-loader'                 
+                    'postcss-loader',          
+                    'sass-loader'                  
                 ]
             },
             {   //url-loader   内置了file-loader，当超过limit规定的大小，则使用file-loader，会将匹配的文件复制到规定的imgs目录
@@ -113,7 +113,7 @@ module.exports = {
                     //     presets: [
                     //         [
                     //             '@babel/preset-env', {         //使用preset-env进行语法降级（另外还需要配合@babel/polyfill（在index.js中使用）进行低版本浏览器不存在的一些特性弥补才能真正实现全部语法兼容）   npm install @babel/preset-env --save-dev
-                    //                 useBuiltIns: 'usage',                 //import "@babel/polyfill"进行特性弥补时会弥补所有的高级语法，通过usage配置，则只会弥补代码中有使用到的需要弥补的语法特性，从而减少打包后的文件体积；
+                    //                 useBuiltIns: 'usage',                 //import "@babel/polyfill"进行特性弥补时会弥补所有的高级语法，通过usage配置，则只会弥补代码中有使用到的需要弥补的语法特性，从而减少打包后的文件体积，另外配置了该项后会帮我们自动引入babel/polyfill，无需再在业务代码中手动引入；
                     //                 // targets:{                          //通过浏览器版本进行语法过滤，一般来讲你不知道用户会使用什么浏览器的情况，就注释掉吧！
                     //                 //     chrome:'67'                    //这里用于配置你的代码所使用的的浏览器环境，让webpack自动的根据浏览器支持情况进行决定是否有必要进行代码降级等！在当前配置的浏览器版本支持对应语法的情况下不需要再进行降级，弥补等操作，达到节省性能以及减少代码体积的效果；
                     //                 // }
@@ -160,8 +160,8 @@ module.exports = {
             }
         }),
         new WebpackDeepScopeAnalysisPlugin(),
-        new CleanWebpackPlugin(),                       //用于在重新打包时删除原有代码（主要解决带hash文件没法删除的问题），同时在运行dev服务时也会删除输出目录代码，此时运行的代码在内存中也看不到；
-        new Webpack.HotModuleReplacementPlugin(),       //开启热更新，也就是传说中的HMR
+        new CleanWebpackPlugin(),                       //用于在重新打包时删除原有代码（主要解决带hash文件没法对应替换的问题）,同时因为开发环境的打包代码在内存中，所以开发环境不用clean也行！
+        new Webpack.HotModuleReplacementPlugin(),       //使用HMR技术，用于支持热更新；需要配置hot
         // -->对于css，样式改变不需要刷新页面，自动替换；
         // -->对于js，可以在入口文件中对不同模块进行监听处理；如下代码（index.js）：
         // 总结来讲对css是神器，对js略鸡肋，但事实上css只是css-loader帮我们把下面这种繁琐的事情做了，而js只能手写。而在vue中vue-loader也帮我们做了这种事。不需要手动写callback；
@@ -171,14 +171,19 @@ module.exports = {
         //      })
         //  } 
     ],
+    
+    // 讲了一大堆，结果production模式会自动配置tree shaking，所以这里注释！但是sideEffects还是要配置！
+    // optimization:{                //three Shaking的配置！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
+    //     usedExports:true          //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
+    // },                            //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；
 
     // 使用webpack提供的devserver(npm install webpack-dev-server -D)
     devServer: {
         port: '8082',                                    //配置端口号
         contentBase: 'dist',                             //配置开启的服务器的根路径为当前路径下的dist文件夹
         hot: true,                                       //开启HMR的热更新，
-        hotOnly: true,                                   //配合hot使用，阻止更改代码后自动刷新，即使HMR没有生效；
-        // open:true,                                    //自动打开浏览器（当然如果再package.json中配置了 webpack-dev-server --open则不用额外配置open）
+        // hotOnly: true,                                //配合hot使用，阻止更改代码后自动刷新，即使HMR没有生效；(建议关闭，对于js更新不友好，一般来讲js改变后我希望刷新页面)
+        // open:true,                                    //自动打开浏览器（当然如果在package.json中配置了 webpack-dev-server --open则不用额外配置open）
         proxy: {                                         //跨域反向代理配置
             '/api': 'http://localhost:3000'              //拦截跨域请求，请求api时转到请求配置的服务器地址；
         }
