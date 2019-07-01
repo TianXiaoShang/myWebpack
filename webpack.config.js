@@ -96,7 +96,7 @@ module.exports = {
                     options: {
                         outputPath: 'imgs/',                //图片的输出地址，相对于output.path的地址（也就是输出文件夹下创建一个imgs文件夹存放图片）
                         publicPath: '../imgs/',             //引用该文件的路径。（打包后去哪找图片！）
-                        limit: 2 * 1024,                    //限制文件的大小 8k
+                        limit: 8 * 1024,                    //限制文件的大小 8k
                         name: '[name]_[hash].[ext]'         //打包后的命名规则
                     }
                 }
@@ -152,7 +152,7 @@ module.exports = {
             ]),
         }),
         new HtmlWebpackPlugin({                         //用于自动在dist生成html，  （npm i html-webpack-plugin -D）
-            filename: 'index.html',                     //天坑，这里在run dev时不能使用html/home.html    打包的时候可以按照自定义来打包。但是跑服务器不能加层级也不能改名字;
+            filename: 'html/home.html',                     //天坑，这里在run dev时不能使用html/home.html    打包的时候可以按照自定义来打包。但是跑服务器不能加层级也不能改名字;
             template: './index.html',                   //模板html，会往模板html注入js
             minify: {
                 removeComments: true,                    //去掉注释    可以自己改
@@ -172,7 +172,7 @@ module.exports = {
         //  } 
     ],
     
-    // 讲了一大堆，结果production模式会自动配置tree shaking，所以这里注释！但是sideEffects还是要配置！
+    // 讲了一大堆，结果production模式会自动配置tree shaking，所以这里不用写！但是sideEffects还是要配置！
     // optimization:{                //three Shaking的配置！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
     //     usedExports:true          //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
     // },                            //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；

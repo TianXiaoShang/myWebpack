@@ -13,6 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --open --config ./build/webpack.dev.js",
     "build": "webpack --config ./build/webpack.prod.js",
+    "dev-build": "webpack --config ./build/webpack.dev.js",
     "middleware": "node server.js"
   },
   "keywords": [],
@@ -51,6 +52,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.4.5",
-    "@babel/runtime-corejs2": "^7.4.5"
+    "@babel/runtime-corejs2": "^7.4.5",
+    "lodash": "^4.17.11"
   }
 }

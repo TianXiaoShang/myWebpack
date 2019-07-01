@@ -1,17 +1,18 @@
-const PurifyCSSPlugin = require('purifycss-webpack')
 const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const glob = require('glob-all')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const PurifyCSSPlugin = require('purifycss-webpack')
+const glob = require('glob-all')                       //配合PurifyCSSPlugin消除未使用的css。
 const path = require("path")
 // 这里的公共配置，用npm i webpack-merge -D 分别合并到dev跟pro两个模式，达到代码复用
 
 module.exports = {
     entry: {
-        index: path.join(__dirname, '../src/js/index.js'),                  //也可以写多个入口，html引入多个打包后的js；
+        index: path.join(__dirname, '../src/js/index.js'),      //也可以写多个入口，html引入多个打包后的js；
     },
     output: {
         // publicPath:'http://cdn.com.cn',           //当js在另一个cdn地址上，这里将作为html引用js地址中拼接成最终的完整访问地址；如：<script src="http://cdn.com.cn/js/index.boundle.js"></script>;
-        path: path.resolve(__dirname, '../dist'),      //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
+        path: path.resolve(__dirname, '../dist'),    //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
         filename: "js/[name]_[hash].boundle.js"      //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；
     },
     module: {
@@ -38,18 +39,6 @@ module.exports = {
                     'postcss-loader',
                     'sass-loader'
                 ]
-            },
-            {   //url-loader   内置了file-loader，当超过limit规定的大小，则使用file-loader，会将匹配的文件复制到规定的imgs目录
-                test: /\.(png|jpg|gif)$/i,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        outputPath: 'imgs/',                //图片的输出地址，相对于output.path的地址（也就是输出文件夹下创建一个imgs文件夹存放图片）
-                        publicPath: '../imgs/',             //引用该文件的路径。
-                        limit: 8 * 1024,                    //限制文件的大小 8k
-                        name: '[name]_[hash].[ext]'         //打包后的命名规则
-                    }
-                }
             },
             {    //bable 
                 test: /\.m?js$/,                             //对js进行语法降级，chrome等浏览器可以直接识别es6，但很多低版本以及ie不能            
@@ -91,13 +80,18 @@ module.exports = {
         ],
     },
     plugins: [
-        new PurifyCSSPlugin({
-            // Give paths to parse for rules. These should be absolute!
-            paths: glob.sync([
-                path.join(__dirname, './*.html'),       //匹配html文件
-                path.join(__dirname, './src/js/*.js')   //匹配js文件
-            ]),
-        }),
         new WebpackDeepScopeAnalysisPlugin(),
+        new CleanWebpackPlugin(),                       //用于在重新打包时删除原有代码（主要解决带hash文件没法替换的问题,另外最新版本已经不需要再基础的配置）！
+        new PurifyCSSPlugin({                           //（坑）用于抽离多余的css，所以这里匹配的html跟js所有用到css的入口千万不能错，否则检测没用上就都不见了；
+            paths: glob.sync([
+                path.join(__dirname, '../*.html'),      //匹配html中使用到的css
+                path.join(__dirname, '../src/js/*.js')  //匹配js中使用到的css
+            ]),
+        }),  
+
+        // 以下讲了一大堆，结果production模式会自动配置tree shaking，所以这里不用写！但是package.json中的sideEffects还是要配置！
+        // optimization:{                //three Shaking的配置！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
+        //     usedExports:true          //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
+        // },                            //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；                 
     ],
 }
