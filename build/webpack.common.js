@@ -1,6 +1,5 @@
 const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const PurifyCSSPlugin = require('purifycss-webpack')
 const glob = require('glob-all')                       //配合PurifyCSSPlugin消除未使用的css。
 const path = require("path")
@@ -81,17 +80,58 @@ module.exports = {
     },
     plugins: [
         new WebpackDeepScopeAnalysisPlugin(),
-        new CleanWebpackPlugin(),                       //用于在重新打包时删除原有代码（主要解决带hash文件没法替换的问题,另外最新版本已经不需要再基础的配置）！
         new PurifyCSSPlugin({                           //（坑）用于抽离多余的css，所以这里匹配的html跟js所有用到css的入口千万不能错，否则检测没用上就都不见了；
             paths: glob.sync([
                 path.join(__dirname, '../*.html'),      //匹配html中使用到的css
                 path.join(__dirname, '../src/js/*.js')  //匹配js中使用到的css
             ]),
         }),  
-
-        // 以下讲了一大堆，结果production模式会自动配置tree shaking，所以这里不用写！但是package.json中的sideEffects还是要配置！
-        // optimization:{                //three Shaking的配置！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
-        //     usedExports:true          //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
-        // },                            //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；                 
     ],
+    
+    optimization:{                
+        // usedExports:true,    //tree shaking！以下讲了一大堆，结果production模式会自动配置tree shaking，所以这里不用写！但是package.json中的sideEffects还是要配置！
+                                //three Shaking！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
+                                //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
+                                //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；                 
+
+        //启用代码分割，比如引入的lodash，不应该跟业务代码打包到一起，以便于用户第二次访问可以直接取缓存，而只需要请求变更后的业务代码即可；会自动分割成多个js文件（比手动使用多入口进行分割来的方便）  --> 底部有第二种异步引入方法；
+        splitChunks:{     
+            chunks: 'all',                 //all是对同步跟异步两种分割方式都配置生效
+            minSize: 30000,                //当小于30kb时不打包
+            maxSize: 0,                    //打包后超过额定大小尝试二次分割成更小的包，一般不用
+            minChunks: 1,                  //当被引用超过1次就打包
+            maxAsyncRequests: 5,           //代码分割太厉害会产生多个请求，指最多分割前五个包，之后的将不再分割
+            maxInitialRequests: 3,         //入口文件加载超过3个不再分割
+            automaticNameDelimiter: '~',   //文件名连接符
+            name: true,                    //使得cacheGroups中的filename生效
+            
+            //当满足上述条件（比如misize> 30kb），则开始进行下面的缓存组挑选，选择匹配的组来分割；
+            cacheGroups: {                            //缓存组，满足同样要求的会打包在一个组js文件中，比如lodash跟jq他们俩会打包在同一个文件中。前提是满足同一个组的要求
+                vendors: {                            //组的名字，配置该组的要求
+                    test: /[\\/]node_modules[\\/]/,   //匹配的包来自node_modules中,而不是这里的将走default配置
+                    priority: -10,                    //优先级，同样满足不同组的要求，数值大小决定优先级
+                    filename:'./js/vendors.js'        //代码分割出来的文件名
+                },
+                default: {
+                        minChunks: 2,                 //被依赖的包，被入口文件引入的次数大于这个数值，才会被打包，如不写，则只有在被所有入口文件都依赖时，才会提取出来分割，否则7个入口，6个依赖，也不会打包，6个文件都有重复代码；
+                        priority: -20,
+                        reuseExistingChunk: true,     //当一个包已经被分割过，将直接使用之前的
+                        filename:'common.js'       
+                }
+            }
+        }
+    },
 }
+
+// 如下，这种异步加载模块的方法，不需要配置splitChunks也可以自动进行代码分割，但是配置还是会走上述配置(需要babel的一个插件来转译实验性语法'npm i @babel/plugin-syntax-dynamic-import --save-dev'  --> .babelrc配置  -->   "plugins": ["@babel/plugin-syntax-dynamic-import"] )
+    //  --  index.js
+// function getComponent(){    
+//     return import(/* webpackChunkName:"lodash" */ 'lodash').then(({default: _ }) => {
+//         var element = document.createElement('div');
+//         element.innerHTML = _join(['xiao','shang','shang'],"-");
+//         return element;
+//     })
+// }
+// getComponent().then(element => {
+//     document.body.appendChild(element);
+// })

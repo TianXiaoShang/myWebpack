@@ -1,3 +1,5 @@
+//注意！！！！ 已弃用，采用build中的分模式开发，本配置作为备份暂时保留
+
 const path = require("path")
 const autoprefixer = require('autoprefixer')
 const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default

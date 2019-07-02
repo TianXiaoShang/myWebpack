@@ -101,4 +101,4 @@ const devConfig = {
     }
 }
 
-module.exports = merge(commonConfig, devConfig)          //合并公共部分配置项 
+module.exports = merge(commonConfig, devConfig)          //合并公共部分配置项
