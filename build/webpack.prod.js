@@ -60,7 +60,7 @@ const prodConfig = {
         new MiniCssExtractPlugin({                      //该插件只能在production模式使用，用于代替style-loader，作用是单独抽离css文件，而不会放在head的style标签中；
             filename: 'css/[name]_[hash].css',          //除了给css命名，还可以增加路径（这里给css创建一个单独的css文件夹）
         }),
-        new HtmlWebpackPlugin({                        //此处注释见开发环境配置，以开发环境配置为主，不重复注释
+        new HtmlWebpackPlugin({                         //此处注释见开发环境配置，以开发环境配置为主，不重复注释
             filename: 'html/home.html',           
             template: './index.html',            
             minify: {

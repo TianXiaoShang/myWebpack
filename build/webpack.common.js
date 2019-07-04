@@ -95,14 +95,14 @@ module.exports = {
                                 //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；                 
 
         //启用代码分割，比如引入的lodash，不应该跟业务代码打包到一起，以便于用户第二次访问可以直接取缓存，而只需要请求变更后的业务代码即可；会自动分割成多个js文件（比手动使用多入口进行分割来的方便）  --> 底部有第二种异步引入方法；
-        splitChunks:{     
+        splitChunks:{                      //其实下面大部分是默认配置，大部分时候只要配置chunks为all就行
             chunks: 'all',                 //all是对同步跟异步两种分割方式都配置生效
             minSize: 30000,                //当小于30kb时不打包
             maxSize: 0,                    //打包后超过额定大小尝试二次分割成更小的包，一般不用
-            minChunks: 1,                  //当被引用超过1次就打包
+            minChunks: 1,                  //当被引用超过1次就打包（这里的次数实际是指打包后的所有chunk分割的包中，有多少个包引入使用过）
             maxAsyncRequests: 5,           //代码分割太厉害会产生多个请求，指最多分割前五个包，之后的将不再分割
             maxInitialRequests: 3,         //入口文件加载超过3个不再分割
-            automaticNameDelimiter: '~',   //文件名连接符
+            automaticNameDelimiter: '~',   //文件名连接符(默认是[组名]~[入口js文件名].js,filename会覆盖默认名字)
             name: true,                    //使得cacheGroups中的filename生效
             
             //当满足上述条件（比如misize> 30kb），则开始进行下面的缓存组挑选，选择匹配的组来分割；
@@ -116,22 +116,33 @@ module.exports = {
                         minChunks: 2,                 //被依赖的包，被入口文件引入的次数大于这个数值，才会被打包，如不写，则只有在被所有入口文件都依赖时，才会提取出来分割，否则7个入口，6个依赖，也不会打包，6个文件都有重复代码；
                         priority: -20,
                         reuseExistingChunk: true,     //当一个包已经被分割过，将直接使用之前的
-                        filename:'common.js'       
+                        filename:'./js/common.js'       
                 }
             }
         }
     },
 }
 
+// (下面的代码不应该出现在这，但是为了笔记方便查阅。没管那么多了)
 // 如下，这种异步加载模块的方法，不需要配置splitChunks也可以自动进行代码分割，但是配置还是会走上述配置(需要babel的一个插件来转译实验性语法'npm i @babel/plugin-syntax-dynamic-import --save-dev'  --> .babelrc配置  -->   "plugins": ["@babel/plugin-syntax-dynamic-import"] )
-    //  --  index.js
+    //  -->  index.js
 // function getComponent(){    
-//     return import(/* webpackChunkName:"lodash" */ 'lodash').then(({default: _ }) => {
+//     return import(/* webpackChunkName:"lodash" */ 'lodash').then(({default: _ }) => {    // /* webpackChunkName:"lodash" */用来给chunk后的包起指定名字（需要依赖上述@babel/plugin-syntax-dynamic-import包才能识别这种注释一样的语法）
 //         var element = document.createElement('div');
-//         element.innerHTML = _join(['xiao','shang','shang'],"-");
+//         element.innerHTML = _.join(['xiao','shang','shang'],"-");
 //         return element;
 //     })
+// } 
+// // 这种异步写法可以避免使用promise，更简洁！
+// async function getComponent(){    
+//     const { default: _ } = await import(/* webpackChunkName:"lodash" */ 'lodash')
+//     const element = document.createElement('div');
+//     element.innerHTML = _.join(['xiao','shang','shang'],"-");
+//     return element;
 // }
-// getComponent().then(element => {
-//     document.body.appendChild(element);
+// //另外这种异步引入模块还有一个特别的好处就是兰加载模块，比如这里在点击之前不会下载loadsh库；
+// document.addEventListener('click', () => {   
+//     getComponent().then(element => {
+//         document.body.appendChild(element);
+//     })
 // })
