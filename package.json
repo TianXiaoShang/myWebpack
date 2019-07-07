@@ -12,7 +12,7 @@
     "watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --open --config ./build/webpack.dev.js",
-    "build": "webpack --config ./build/webpack.prod.js",
+    "build": "webpack --profile --json > stats.json --config ./build/webpack.prod.js",
     "dev-build": "webpack --config ./build/webpack.dev.js",
     "middleware": "node server.js"
   },
@@ -42,6 +42,7 @@
     "stylus-loader": "^3.0.2",
     "url-loader": "^2.0.0",
     "webpack": "^4.33.0",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.4",
     "webpack-deep-scope-plugin": "^1.6.1",
     "webpack-dev-server": "^3.7.1",

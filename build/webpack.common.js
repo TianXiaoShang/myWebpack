@@ -62,7 +62,7 @@ module.exports = {
 
                     //     // 写插件、类库等推荐该方法，有效防止变量污染；上面的搭配套餐中的polyfill会存在变量污染的问题；
                     //     // "plugins": [["@babel/plugin-transform-runtime", {    //  npm install --save @babel/runtime
-                    //     //     "corejs": 2,                                     //这里改成2需要额外增加一个包  npm install --save @babel/runtime-corejs2
+                    //     //     "corejs": 2,                                     //这里改成2版本需要额外增加一个包  npm install --save @babel/runtime-corejs2
                     //     //     "helpers": true,
                     //     //     "regenerator": true,
                     //     //     "useESModules": false
@@ -94,10 +94,15 @@ module.exports = {
                                 //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
                                 //值得注意的是production环境才会生效，development环境因为考虑到过滤掉以后不便于调试找到准确的行数，所以开发模式并没有tree shaking处理；                 
 
-        //启用代码分割，比如引入的lodash，不应该跟业务代码打包到一起，以便于用户第二次访问可以直接取缓存，而只需要请求变更后的业务代码即可；会自动分割成多个js文件（比手动使用多入口进行分割来的方便）  --> 底部有第二种异步引入方法；
+        //启用代码分割，比如引入的lodash，不应该跟业务代码打包到一起，以便于用户第二次访问页面，依赖文件没变而可以直接取缓存，而只需要请求变更后的业务代码即可；会自动分割成多个js文件（比手动配置多入口进行分割来的方便）  --> 底部有第二种异步引入方法；
+        //关于代码分割还有两个重要的概念：Preloadin,prefetching（推荐）；（webpack认为利用缓存优化第二次访问不是最好的，而是希望优化代码利用率 --> 控制台ctrl + shift + p键打开，点击圆点查看）
+        // webpack希望首先加载需要用到的代码，而不需要用到的等页面首先需要的加载完，此时带宽空闲时再去加载其他异步的代码，比如click事件的代码（webpack认为click事件中的代码一开始不需要用到）
+        // 使用方式如下：（实际上也就是lazy load导致响应慢的一种解决方案方案）
+        // import(/* webpackPrefetch: true */'LoginModal');       //这样会在加载完主要内容带宽空闲时就去加载，用户点击再去下载就直接取缓存了，而普通的import的懒加载会等用户点击再下载那样点击后反应会很慢；
+        // import(/* webpackPreload: true */'ChartingLibrary');   //load不如profetch
         splitChunks:{                      //其实下面大部分是默认配置，大部分时候只要配置chunks为all就行
             chunks: 'all',                 //all是对同步跟异步两种分割方式都配置生效
-            minSize: 30000,                //当小于30kb时不打包
+            minSize: 30000,                //当小于30kb时不额外分割打包
             maxSize: 0,                    //打包后超过额定大小尝试二次分割成更小的包，一般不用
             minChunks: 1,                  //当被引用超过1次就打包（这里的次数实际是指打包后的所有chunk分割的包中，有多少个包引入使用过）
             maxAsyncRequests: 5,           //代码分割太厉害会产生多个请求，指最多分割前五个包，之后的将不再分割
@@ -124,7 +129,7 @@ module.exports = {
 }
 
 // (下面的代码不应该出现在这，但是为了笔记方便查阅。没管那么多了)
-// 如下，这种异步加载模块的方法，不需要配置splitChunks也可以自动进行代码分割，但是配置还是会走上述配置(需要babel的一个插件来转译实验性语法'npm i @babel/plugin-syntax-dynamic-import --save-dev'  --> .babelrc配置  -->   "plugins": ["@babel/plugin-syntax-dynamic-import"] )
+// 如下，这种异步加载模块的方法（懒加载，在点击之前不会加载loadsh），不需要配置splitChunks也可以自动进行代码分割，但是配置还是会走上述配置(需要babel的一个插件来转译实验性语法'npm i @babel/plugin-syntax-dynamic-import --save-dev'  --> .babelrc配置  -->   "plugins": ["@babel/plugin-syntax-dynamic-import"] )
     //  -->  index.js
 // function getComponent(){    
 //     return import(/* webpackChunkName:"lodash" */ 'lodash').then(({default: _ }) => {    // /* webpackChunkName:"lodash" */用来给chunk后的包起指定名字（需要依赖上述@babel/plugin-syntax-dynamic-import包才能识别这种注释一样的语法）
@@ -140,9 +145,21 @@ module.exports = {
 //     element.innerHTML = _.join(['xiao','shang','shang'],"-");
 //     return element;
 // }
-// //另外这种异步引入模块还有一个特别的好处就是兰加载模块，比如这里在点击之前不会下载loadsh库；
+// //另外这种异步引入模块还有一个特别的好处就是懒加载模块，比如这里在点击之前不会下载loadsh库；
 // document.addEventListener('click', () => {   
 //     getComponent().then(element => {
 //         document.body.appendChild(element);
 //     })
 // })
+
+
+/**
+ * 如下为打包信息详细分析方式与技巧；
+ *  在build命令中加入：-profile --json > stats.json 来生成打包详细信息json文件 --> 如下：
+ * "build": "webpack --profile --json > stats.json --config ./build/webpack.prod.js",
+ * 打开网站  webpack.github.io/analyse/  或者  https://alexkuz.github.io/webpack-chart/  (需要翻墙)
+ * 另外webpack官方也有推荐工具，detail see https://www.webpackjs.com/guides/code-splitting/#bundle-%E5%88%86%E6%9E%90-bundle-analysis-
+ * 这里推荐用插件 npm install --save-dev webpack-bundle-analyzer
+ * 详情见 webpack.prod.js 配置
+ * --profile --json > stats.json
+ */
