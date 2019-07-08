@@ -23,7 +23,7 @@ const devConfig = {
                 test: /\.css$/,                      //css-loader负责整理css依赖文件，styles-loader负责挂载到html；
                 use: [
                     'style-loader',                  //开发模式使用style-loader；     
-                    // MiniCssExtractPlugin.loader,  //该插件只能在production模式使用，用于代替style-loader，作用是单独抽离css文件，而不是放在head的style标签中；
+                    // MiniCssExtractPlugin.loader,  //该插件只在production模式使用，因为他不支持HMR而影响开发效率，用于代替style-loader，作用是单独抽离css文件，而不是放在head的style标签中；
                     'css-loader',                    //在css中不会引入stylus跟scss等，则无需关注importLoaders配置的问题；
                     {
                         loader: 'postcss-loader',    //这里的添加厂商前缀插件的方法跟下面styl写法不同，作用一样
@@ -72,8 +72,7 @@ const devConfig = {
                 collapseWhitespace: true,               //去掉空格   压缩html
             }
         }),
-        
-        new Webpack.HotModuleReplacementPlugin(),       //使用HMR技术，用于支持热更新；需要配置hot
+        new Webpack.HotModuleReplacementPlugin(),       //使用HMR技术，用于支持热更新；需要在devServer中配置hot
         // -->对于css，样式改变不需要刷新页面，自动替换；
         // -->对于js，可以在入口文件中对不同模块进行监听处理；如下代码（index.js）：
         // 总结来讲对css是神器，对js略鸡肋，但事实上css只是css-loader帮我们把下面这种繁琐的事情做了，而js只能手写。而在vue中vue-loader也帮我们做了这种事。不需要手动写callback；
