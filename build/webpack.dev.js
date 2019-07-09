@@ -1,8 +1,9 @@
 const Webpack = require('webpack');       //这里主要是为了使用HotModuleReplacementPlugin,因为他是webpack自带的插件，所以这里我们引入webpack；
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const merge = require('webpack-merge')    //用于将公共配置与开发和生产两个环境的配置进行合并
 const autoprefixer = require('autoprefixer')
-const commonConfig = require('./webpack.common.js')
+// const merge = require('webpack-merge')    //用于将公共配置与开发和生产两个环境的配置进行合并
+// const commonConfig = require('./webpack.common.js')
+
 // import HtmlWebpackPlugin from 'html-webpack-plugin'    //不能用import哦
 
 const devConfig = {
@@ -57,7 +58,7 @@ const devConfig = {
                         outputPath: 'imgs/',                //图片的输出地址，相对于output.path的地址（也就是输出文件夹下创建一个imgs文件夹存放图片）
                         publicPath: './imgs/',              //引用该文件的路径。
                         limit: 8 * 1024,                    //限制文件的大小 8k
-                        name: '[name]_[hash].[ext]'         //打包后的命名规则
+                        name: '[name].[ext]'         //打包后的命名规则
                     }
                 }
             },
@@ -82,10 +83,6 @@ const devConfig = {
         //      })
         //  } 
     ],
-    
-
-    
-
 
     // 使用webpack提供的devserver(npm install webpack-dev-server -D)
     devServer: {
@@ -100,4 +97,5 @@ const devConfig = {
     }
 }
 
-module.exports = merge(commonConfig, devConfig)          //合并公共部分配置项
+// module.exports = merge(commonConfig, devConfig)       //使用webpack全局变量控制输出模式所以注释       //合并公共部分配置项
+module.exports = devConfig

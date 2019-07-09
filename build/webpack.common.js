@@ -1,19 +1,24 @@
 const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PurifyCSSPlugin = require('purifycss-webpack')
+const Webpack = require('webpack');       //这里是为了使用providePlugin插件
 const glob = require('glob-all')                       //配合PurifyCSSPlugin消除未使用的css。
 const path = require("path")
-// 这里的公共配置，用npm i webpack-merge -D 分别合并到dev跟pro两个模式，达到代码复用
+const merge = require('webpack-merge')
 
-module.exports = {
+// 这里的公共配置，用npm i webpack-merge -D 分别合并到dev跟pro两个模式，达到代码复用
+const prodConfig = require('./webpack.prod.js');
+const devConfig = require('./webpack.dev.js');
+
+const commonConfig = {
     entry: {
         index: path.join(__dirname, '../src/js/index.js'),      //也可以写多个入口，html引入多个打包后的js；
     },
     output: {
-        // publicPath:'http://cdn.com.cn',           //当js在另一个cdn地址上，这里将作为html引用js地址中拼接成最终的完整访问地址；如：<script src="http://cdn.com.cn/js/index.boundle.js"></script>;
-        path: path.resolve(__dirname, '../dist'),    //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
-        filename: "js/[name]_[hash].boundle.js",     //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；
-        // chunkFilename:'js/[name].chunk.js'           //其实就是splitChunks中的配置；配置其中之一即可；
+        // publicPath:'http://cdn.com.cn',                  //当js在另一个cdn地址上，这里将作为html引用js地址中拼接成最终的完整访问地址；如：<script src="http://cdn.com.cn/js/index.boundle.js"></script>;
+        path: path.resolve(__dirname, '../dist'),           //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
+        filename: "js/[name]_[contenthash].boundle.js",     //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；
+        chunkFilename:'js/[name]_[contenthash].chunk.js'    //其实就是splitChunks中的配置；配置其中之一即可；
     },
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
@@ -43,7 +48,7 @@ module.exports = {
             {    //bable 
                 test: /\.m?js$/,                             //对js进行语法降级，chrome等浏览器可以直接识别es6，但很多低版本以及ie不能            
                 exclude: /(node_modules|bower_components)/,  //配置需要排除降级的文件夹，如node_modules等，不需要给第三方依赖做语法转译
-                use: {
+                use: [{
                     loader: 'babel-loader',                  //使用babel-loader，但是它只是一个桥梁，真正进行语法编译降级的是下面的@babel/preset-env  （npm install --save-dev babel-loader @babel/core）
                     // 这里把options注释是因为建立了一个.babelrc文件在根目录，可以自动实用其中的配置，在babelrc文件中我配置使用了第一套配置，可以打开查看详情；
 
@@ -69,7 +74,9 @@ module.exports = {
                     //     //     "useESModules": false
                     //     // }]]
                     // }
-                }
+                },{
+                    // loader:'imports-loader?this=>window'      //默认来讲所有的依赖包内的this指向自身，通过这个插件方法可以指向window;有特殊需要才用吧！
+                }]
             },
             {
                 test: /\.(htm|html)$/i,
@@ -79,6 +86,7 @@ module.exports = {
             }
         ],
     },
+    
     plugins: [
         new WebpackDeepScopeAnalysisPlugin(),
         new PurifyCSSPlugin({                           //（坑）用于抽离多余的css，所以这里匹配的html跟js所有用到css的入口千万不能错，否则检测没用上就都不见了；
@@ -87,9 +95,15 @@ module.exports = {
                 path.join(__dirname, '../src/js/*.js')  //匹配js中使用到的css
             ]),
         }),  
+        // new Webpack.ProvidePlugin({        //用于解决模块之间不能相互引用的问题，以满足两个封闭的依赖包可以相互引用，帮助其import指定模块；
+        //     $:'jquery'                     //检测到使用$则自动帮助import $ form 'jquery'
+        // })
     ],
     
     optimization:{
+        // runtimeChunk:{
+        //     name:'runtime'  //把依赖的关系放到一个单独的文件中，防止webpack老版本混在业务代码中时因为依赖关系改变而导致contenthash改变；
+        // },
         usedExports:true,   //tree shaking！以下讲了一大堆，结果production模式会自动配置tree shaking，所以这里不用写！但是package.json中的sideEffects还是要配置！
                             //three Shaking！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
                             //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
@@ -116,22 +130,27 @@ module.exports = {
                 vendors: {                            //组的名字，配置该组的要求
                     test: /[\\/]node_modules[\\/]/,   //匹配的包来自node_modules中,而不是这里的将走default配置
                     priority: -10,                    //优先级，同样满足不同组的要求，数值大小决定优先级
-                    filename:'./js/vendors.js'        //代码分割出来的文件名
+                    name:'vendors',                   
+                    // filename:'./js/vendors.[contenthash].js'        //代码分割出来的文件名
                 },
                 default: {
-                        minChunks: 2,                 //被依赖的包，被入口文件引入的次数大于这个数值，才会被打包，如不写，则只有在被所有入口文件都依赖时，才会提取出来分割，否则7个入口，6个依赖，也不会打包，6个文件都有重复代码；
-                        priority: -20,
-                        reuseExistingChunk: true,     //当一个包已经被分割过，将直接使用之前的
-                        filename:'./js/common.js'
+                    minChunks: 2,                 //被依赖的包，被入口文件引入的次数大于这个数值，才会被打包，如不写，则只有在被所有入口文件都依赖时，才会提取出来分割，否则7个入口，6个依赖，也不会打包，6个文件都有重复代码；
+                    priority: -20,
+                    reuseExistingChunk: true,     //当一个包已经被分割过，将直接使用之前的
+                    name:'common',
+                    // filename:'./js/common.[contenthash].js'
                 },
-                // styles: {               //MiniCssExtractPlugin的底层也依赖splitChunks，所以这里可以配置css的chunk情况；detail see 
-                //     test: /\.css$/,  
-                //     chunks:'all',    
-                //     enforce:true
-                // }
             }
         }
     },
+}
+
+module.exports = (env) => {    //由全局变量控制对应配置来打包，跟单纯的merge有所区别，主要了解这种全局变量配置的方式；
+    if(env && env.production){
+        return merge(commonConfig, prodConfig);
+    }else{
+        return merge(commonConfig, devConfig)
+    }
 }
 
 // (下面的代码不应该出现在这，但是为了笔记方便查阅。没管那么多了)

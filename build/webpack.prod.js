@@ -2,11 +2,11 @@ const path = require("path")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const autoprefixer = require('autoprefixer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const merge = require('webpack-merge')
-const commonConfig = require('./webpack.common.js')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const optimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const merge = require('webpack-merge')
+// const commonConfig = require('./webpack.common.js')
 
 const prodConfig = {
     mode: "production",                          //生产环境，代码将被压缩(默认为production)
@@ -58,23 +58,24 @@ const prodConfig = {
         ],
     },
     optimization:{
-        minimizer:[new optimizeCssAssetsWebpackPlugin({})],  //用于压缩和合并css代码的插件，记得传一个空对象；                
-        splitChunks:{                      
-            cacheGroups: {                 //添加一个styles组来配置css的chunk；
-                // styles: {               //MiniCssExtractPlugin的底层也依赖splitChunks，所以这里可以配置css的chunk情况；detail see 
-                //     name:'styles',
-                //     test: /\.css$/,  
-                //     chunks:'all',    
-                //     enforce:true
-                // }
-            }
-        }
+        // minimizer:[new optimizeCssAssetsWebpackPlugin({})],  //用于压缩和合并css代码的插件，记得传一个空对象；                
+        // splitChunks:{                      
+        //     cacheGroups: {                 //添加一个styles组来配置css的chunk；
+        //         styles: {               //MiniCssExtractPlugin的底层也依赖splitChunks，所以这里可以配置css的chunk情况；detail see 
+        //             name:'styles',
+        //             test: /\.css$/,  
+        //             chunks:'all',    
+        //             enforce:true
+        //         }
+        //     }
+        // }
     },
+    performance:false,
     plugins: [
         new CleanWebpackPlugin(),                //用于在重新打包时删除原有代码，开发环境储存在内存中，其实开发环境没必要删除；（主要解决带hash文件没法替换的问题,另外最新版本已经不需要再基础的配置）！
         new MiniCssExtractPlugin({               //该插件只能在production模式使用，用于代替style-loader，作用是单独抽离css文件，而不会放在head的style标签中；
-            filename: 'css/[name]_[hash].css',   //除了给css命名，还可以增加路径（这里给css创建一个单独的css文件夹）
-            chunkFilename:'css/[name].chunk.css'
+            filename: 'css/[name]_[contenthash].css',   //除了给css命名，还可以增加路径（这里给css创建一个单独的css文件夹）
+            chunkFilename:'css/[name]_[contenthash].chunk.css'
         }),
         new HtmlWebpackPlugin({                  //此处注释见开发环境配置，以开发环境配置为主，不重复注释
             filename: 'html/home.html',           
@@ -92,4 +93,5 @@ const prodConfig = {
     ],
 }
 
-module.exports = merge(prodConfig, commonConfig)
+// module.exports = merge(prodConfig, commonConfig)    //使用全局变量控制输出模式所以注释
+module.exports = prodConfig
