@@ -100,9 +100,9 @@ const commonConfig = {
     ],
     
     optimization:{
-        // runtimeChunk:{
-        //     name:'runtime'  //把依赖的关系放到一个单独的文件中，防止webpack老版本混在业务代码中时因为依赖关系改变而导致contenthash改变；
-        // },
+        runtimeChunk:{
+            name:'runtime'  //把依赖的关系放到一个单独的文件中，防止webpack老版本混在业务代码中时因为依赖关系改变而导致contenthash改变；
+        },
         usedExports:true,   //tree shaking！以下讲了一大堆，结果production模式会自动配置tree shaking，所以这里不用写！但是package.json中的sideEffects还是要配置！
                             //three Shaking！用于过滤掉我们引入了文件，但并没有使用到该文件中export出来的其他未使用模块。对这部分模块我们过滤掉，按需使用节省性能和打包后的代码体积！
                             //首先他只支持ES模块规范，因为他是静态的（import），不支持commonJs规范（require）！另外需要在package.json中的sideEffects对某些文件做特殊处理，详情见webpack.md！
