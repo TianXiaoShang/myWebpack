@@ -1,5 +1,6 @@
 const Webpack = require('webpack');       //这里主要是为了使用HotModuleReplacementPlugin,因为他是webpack自带的插件，所以这里我们引入webpack；
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require("path")
 const autoprefixer = require('autoprefixer')
 // const merge = require('webpack-merge')    //用于将公共配置与开发和生产两个环境的配置进行合并
 // const commonConfig = require('./webpack.common.js')
@@ -17,7 +18,12 @@ const devConfig = {
         //cheap-inline-source-map,加上cheap则只会告诉你第几行，不会告诉你第几列（或者说第几个字符）出错，省性能；
         //cheap-module-inline-source-map,加上module代表不止管业务代码，依赖的包中的报错也能帮你定位；
         //eval，不生成map文件，以eval的方式生成对应关系，性能最佳，但是提示信息不够全；
-    
+    output: {
+        // publicPath:'http://cdn.com.cn',                  //当js在另一个cdn地址上，这里将作为html引用js地址中拼接成最终的完整访问地址；如：<script src="http://cdn.com.cn/js/index.boundle.js"></script>;
+        path: path.resolve(__dirname, '../dist'),           //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
+        filename: "js/[name].boundle.js",     //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；(另外开发环境不能用contenthash)
+        chunkFilename:'js/[name].chunk.js'    //其实就是splitChunks中的配置；配置其中之一即可；
+    },
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
             {   //file-loader

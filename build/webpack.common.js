@@ -3,6 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PurifyCSSPlugin = require('purifycss-webpack')
 const Webpack = require('webpack');       //这里是为了使用providePlugin插件
 const glob = require('glob-all')                       //配合PurifyCSSPlugin消除未使用的css。
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require("path")
 const merge = require('webpack-merge')
 
@@ -13,12 +14,6 @@ const devConfig = require('./webpack.dev.js');
 const commonConfig = {
     entry: {
         index: path.join(__dirname, '../src/js/index.js'),      //也可以写多个入口，html引入多个打包后的js；
-    },
-    output: {
-        // publicPath:'http://cdn.com.cn',                  //当js在另一个cdn地址上，这里将作为html引用js地址中拼接成最终的完整访问地址；如：<script src="http://cdn.com.cn/js/index.boundle.js"></script>;
-        path: path.resolve(__dirname, '../dist'),           //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
-        filename: "js/[name]_[contenthash].boundle.js",     //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；
-        chunkFilename:'js/[name]_[contenthash].chunk.js'    //其实就是splitChunks中的配置；配置其中之一即可；
     },
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
@@ -48,35 +43,38 @@ const commonConfig = {
             {    //bable 
                 test: /\.m?js$/,                             //对js进行语法降级，chrome等浏览器可以直接识别es6，但很多低版本以及ie不能            
                 exclude: /(node_modules|bower_components)/,  //配置需要排除降级的文件夹，如node_modules等，不需要给第三方依赖做语法转译
-                use: [{
-                    loader: 'babel-loader',                  //使用babel-loader，但是它只是一个桥梁，真正进行语法编译降级的是下面的@babel/preset-env  （npm install --save-dev babel-loader @babel/core）
-                    // 这里把options注释是因为建立了一个.babelrc文件在根目录，可以自动实用其中的配置，在babelrc文件中我配置使用了第一套配置，可以打开查看详情；
+                use: [
+                    {
+                        loader: 'babel-loader',                  //使用babel-loader，但是它只是一个桥梁，真正进行语法编译降级的是下面的@babel/preset-env  （npm install --save-dev babel-loader @babel/core）
+                        // 这里把options注释是因为建立了一个.babelrc文件在根目录，可以自动实用其中的配置，在babelrc文件中我配置使用了第一套配置，可以打开查看详情；
 
-                    // options: {
-                    //     // 两套配置，总结来讲业务代码推荐用第一种套餐搭配，写一些插件以及类库为了防止变量污染则建议使用下面的runtime的plugin！
-                    //     presets: [
-                    //         [
-                    //             '@babel/preset-env', {     //使用preset-env进行语法降级（另外还需要配合@babel/polyfill（在index.js中使用）进行低版本浏览器不存在的一些特性弥补才能真正实现全部语法兼容）   npm install @babel/preset-env --save-dev
-                    //                 useBuiltIns: 'usage',  //import "@babel/polyfill"进行特性弥补时会弥补所有的高级语法，通过usage配置，则只会弥补代码中有使用到的需要弥补的语法特性，从而减少打包后的文件体积，另外配置了该项后会帮我们自动引入babel/polyfill，无需再在业务代码中手动引入；
-                    //                 // targets:{           //通过浏览器版本进行语法过滤，一般来讲你不知道用户会使用什么浏览器的情况，就注释掉吧！
-                    //                 //     chrome:'67'     //这里用于配置你的代码所使用的的浏览器环境，让webpack自动的根据浏览器支持情况进行决定是否有必要进行代码降级等！在当前配置的浏览器版本支持对应语法的情况下不需要再进行降级，弥补等操作，达到节省性能以及减少代码体积的效果；
-                    //                 // }
-                    //             }
-                    //         ],
-                    //         // "@babel/preset-react"       //preser-react解析react代码；当然这里并没有使用到react；
-                    //     ],
+                        // options: {
+                        //     // 两套配置，总结来讲业务代码推荐用第一种套餐搭配，写一些插件以及类库为了防止变量污染则建议使用下面的runtime的plugin！
+                        //     presets: [
+                        //         [
+                        //             '@babel/preset-env', {     //使用preset-env进行语法降级（另外还需要配合@babel/polyfill（在index.js中使用）进行低版本浏览器不存在的一些特性弥补才能真正实现全部语法兼容）   npm install @babel/preset-env --save-dev
+                        //                 useBuiltIns: 'usage',  //import "@babel/polyfill"进行特性弥补时会弥补所有的高级语法，通过usage配置，则只会弥补代码中有使用到的需要弥补的语法特性，从而减少打包后的文件体积，另外配置了该项后会帮我们自动引入babel/polyfill，无需再在业务代码中手动引入；
+                        //                 // targets:{           //通过浏览器版本进行语法过滤，一般来讲你不知道用户会使用什么浏览器的情况，就注释掉吧！
+                        //                 //     chrome:'67'     //这里用于配置你的代码所使用的的浏览器环境，让webpack自动的根据浏览器支持情况进行决定是否有必要进行代码降级等！在当前配置的浏览器版本支持对应语法的情况下不需要再进行降级，弥补等操作，达到节省性能以及减少代码体积的效果；
+                        //                 // }
+                        //             }
+                        //         ],
+                        //         // "@babel/preset-react"       //preser-react解析react代码；当然这里并没有使用到react；
+                        //     ],
 
-                    //     // 写插件、类库等推荐该方法，有效防止变量污染；上面的搭配套餐中的polyfill会存在变量污染的问题；
-                    //     // "plugins": [["@babel/plugin-transform-runtime", {    //  npm install --save @babel/runtime
-                    //     //     "corejs": 2,                                     //这里改成2版本需要额外增加一个包  npm install --save @babel/runtime-corejs2
-                    //     //     "helpers": true,
-                    //     //     "regenerator": true,
-                    //     //     "useESModules": false
-                    //     // }]]
+                        //     // 写插件、类库等推荐该方法，有效防止变量污染；上面的搭配套餐中的polyfill会存在变量污染的问题；
+                        //     // "plugins": [["@babel/plugin-transform-runtime", {    //  npm install --save @babel/runtime
+                        //     //     "corejs": 2,                                     //这里改成2版本需要额外增加一个包  npm install --save @babel/runtime-corejs2
+                        //     //     "helpers": true,
+                        //     //     "regenerator": true,
+                        //     //     "useESModules": false
+                        //     // }]]
+                        // }
+                    },
+                    // {
+                    //     loader:'imports-loader?this=>window'      //默认来讲所有的依赖包内的this指向自身，通过这个插件方法可以指向window;有特殊需要才用吧！
                     // }
-                },{
-                    // loader:'imports-loader?this=>window'      //默认来讲所有的依赖包内的this指向自身，通过这个插件方法可以指向window;有特殊需要才用吧！
-                }]
+                ]
             },
             {
                 test: /\.(htm|html)$/i,
@@ -89,6 +87,7 @@ const commonConfig = {
     
     plugins: [
         new WebpackDeepScopeAnalysisPlugin(),
+        new CleanWebpackPlugin(),                //用于在重新打包时删除原有代码，开发环境储存在内存中，其实开发环境没必要删除；（主要解决带hash文件没法替换的问题,另外最新版本已经不需要再基础的配置）！
         new PurifyCSSPlugin({                           //（坑）用于抽离多余的css，所以这里匹配的html跟js所有用到css的入口千万不能错，否则检测没用上就都不见了；
             paths: glob.sync([
                 path.join(__dirname, '../*.html'),      //匹配html中使用到的css
