@@ -4,6 +4,7 @@ const autoprefixer = require('autoprefixer')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const optimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
 // const merge = require('webpack-merge')
 // const commonConfig = require('./webpack.common.js')
 
@@ -89,11 +90,14 @@ const prodConfig = {
                 collapseWhitespace: true,             
             }
         }),
+        new AddAssetHtmlWebpackPlugin({        //注意，一定要放到HtmlWebpackPlugin后面；
+            filepath:path.resolve(__dirname,'../dll/vendors.dll.js')   
+        }), 
         new BundleAnalyzerPlugin({               //用于生成打包详情可视化预览图；detail see: https://github.com/webpack-contrib/webpack-bundle-analyzer
             analyzerMode:'disabled',             //默认server模式在服务器下打开，可以选择static模式生成静态html,或者disabled禁用；
             generateStatsFile:false,             //默认fale，开启后，会生成state.json文件，也可以直接在命令行生成，详情见package.json中build命令orwebpack.md；
             statsFilename:'../state.json'        //生成stats文件名，可以包含路径，只有generateStatsFile为true时有效；
-        })                     
+        })
     ],
 }
 

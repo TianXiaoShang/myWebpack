@@ -2,6 +2,7 @@ const Webpack = require('webpack');       //这里主要是为了使用HotModule
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require("path")
 const autoprefixer = require('autoprefixer')
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
 // const merge = require('webpack-merge')    //用于将公共配置与开发和生产两个环境的配置进行合并
 // const commonConfig = require('./webpack.common.js')
 
@@ -79,6 +80,9 @@ const devConfig = {
                 collapseWhitespace: true,               //去掉空格   压缩html
             }
         }),
+        new AddAssetHtmlWebpackPlugin({        //在第三方模块打包生成文件后，使用该插件在html中进行引入   npm i add-asset-html-webpack-plugin --save
+            filepath: path.resolve(__dirname,'../dll/vendors.dll.js')    //往生成的html中加入指定（库打包）内容
+        }), 
         new Webpack.HotModuleReplacementPlugin(),       //使用HMR技术，用于支持热更新；需要在devServer中配置hot
         // -->对于css，样式改变不需要刷新页面，自动替换；
         // -->对于js，可以在入口文件中对不同模块进行监听处理；如下代码（index.js）：
@@ -98,7 +102,14 @@ const devConfig = {
         // hotOnly: true,                                //配合hot使用，阻止更改代码后自动刷新，即使HMR没有生效；(建议关闭，对于js更新不友好，一般来讲js改变后我希望刷新页面)
         // open:true,                                    //自动打开浏览器（当然如果在package.json中配置了 webpack-dev-server --open则不用额外配置open）
         proxy: {                                         //跨域反向代理配置
-            '/api': 'http://localhost:3000'              //拦截跨域请求，请求api时转到请求配置的服务器地址；
+            '/api':{
+                targrt:'http://localhost:3000',          //拦截跨域请求，请求api时转到请求配置的服务器地址；
+                secure:false,                            //https的地址需要配置secure为false才能生效
+                pathRewrite:{ 
+                    'header.json':'demo.json'            //当请求jeader时改成demo临时接口,以使得我们不用去更改代码中的实际接口；
+                },
+                changeOrigin:true                        //解决服务端在cors对origin做的限制
+            }                                
         }
     }
 }

@@ -1,11 +1,11 @@
 const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const PurifyCSSPlugin = require('purifycss-webpack')
-const Webpack = require('webpack');       //这里是为了使用providePlugin插件
-const glob = require('glob-all')                       //配合PurifyCSSPlugin消除未使用的css。
+const Webpack = require('webpack');                     //这里是为了使用providePlugin插件
+const glob = require('glob-all');                       //配合PurifyCSSPlugin消除未使用的css。
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const path = require("path")
-const merge = require('webpack-merge')
+const path = require("path");
+const merge = require('webpack-merge');
 
 // 这里的公共配置，用npm i webpack-merge -D 分别合并到dev跟pro两个模式，达到代码复用
 const prodConfig = require('./webpack.prod.js');
@@ -14,6 +14,11 @@ const devConfig = require('./webpack.dev.js');
 const commonConfig = {
     entry: {
         index: path.join(__dirname, '../src/js/index.js'),      //也可以写多个入口，html引入多个打包后的js；
+    },
+    resolve:{
+        alias:{
+            src:path.resolve(__dirname,'../src')      //别名，顾名思义！
+        }
     },
     module: {
         rules: [                                     //众所周知use中的loader是倒着用的，所以顺序一定要注意；
@@ -43,6 +48,7 @@ const commonConfig = {
             {    //bable 
                 test: /\.m?js$/,                             //对js进行语法降级，chrome等浏览器可以直接识别es6，但很多低版本以及ie不能            
                 exclude: /(node_modules|bower_components)/,  //配置需要排除降级的文件夹，如node_modules等，不需要给第三方依赖做语法转译
+                // include:path.resolve(_dirname,'../src'),  //与exclude相反。只有src目录下的文件才被babel-loader处理；      
                 use: [
                     {
                         loader: 'babel-loader',                  //使用babel-loader，但是它只是一个桥梁，真正进行语法编译降级的是下面的@babel/preset-env  （npm install --save-dev babel-loader @babel/core）
@@ -93,9 +99,9 @@ const commonConfig = {
                 path.join(__dirname, '../*.html'),      //匹配html中使用到的css
                 path.join(__dirname, '../src/js/*.js')  //匹配js中使用到的css
             ]),
-        }),  
-        // new Webpack.ProvidePlugin({        //用于解决模块之间不能相互引用的问题，以满足两个封闭的依赖包可以相互引用，帮助其import指定模块；
-        //     $:'jquery'                     //检测到使用$则自动帮助import $ form 'jquery'
+        }), 
+        // new Webpack.ProvidePlugin({         //用于解决模块之间不能相互引用的问题，以满足两个封闭的依赖包可以相互引用，帮助其import指定模块；
+        //     $:'jquery'                      //检测到使用$则自动帮助import $ form 'jquery'
         // })
     ],
     
