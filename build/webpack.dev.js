@@ -81,6 +81,7 @@ const devConfig = {
             }
         }),
         new AddAssetHtmlWebpackPlugin({        //在第三方模块打包生成文件后，使用该插件在html中进行引入   npm i add-asset-html-webpack-plugin --save
+            // filepath: require.resolve('../dll/vendors.dll.js')
             filepath: path.resolve(__dirname,'../dll/vendors.dll.js')    //往生成的html中加入指定（库打包）内容
         }), 
         new Webpack.HotModuleReplacementPlugin(),       //使用HMR技术，用于支持热更新；需要在devServer中配置hot

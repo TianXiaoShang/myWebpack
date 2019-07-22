@@ -13,7 +13,7 @@ const prodConfig = {
     devtool: 'cheap-module-source-map',          //生产环境推荐推荐配置，单独生产map文件不增加源代码体积，但是不按F12是不会下载占用带宽的
     output: {
         // publicPath:'http://cdn.com.cn',                  //当js在另一个cdn地址上，这里将作为html引用js地址中拼接成最终的完整访问地址；如：<script src="http://cdn.com.cn/js/index.boundle.js"></script>;
-        path: path.resolve(__dirname, '../dist'),           //dirname代表当前配置文件所在的目录，也就是根目录，在此根目录下创建子文件夹dist为打包后的文件路径；
+        path: path.resolve(__dirname, '../dist'),           //dirname代表当前配置文件所在的目录，在对应目录下创建子文件夹dist为打包后的文件路径；
         filename: "js/[name]_[contenthash].boundle.js",     //除了命名，可以在前面加路径名，创建文件夹，增加相对打包出来的dist的路径；
         chunkFilename:'js/[name]_[contenthash].chunk.js'    //其实就是splitChunks中的配置；配置其中之一即可；
     },
@@ -66,7 +66,7 @@ const prodConfig = {
     optimization:{
         minimizer:[new optimizeCssAssetsWebpackPlugin({})],  //用于压缩和合并css代码的插件，记得传一个空对象；                
         // splitChunks:{                      
-        //     cacheGroups: {                 //添加一个styles组来配置css的chunk；
+        //     cacheGroups: {              //添加一个styles组来配置css的chunk；
         //         styles: {               //MiniCssExtractPlugin的底层也依赖splitChunks，所以这里可以配置css的chunk情况；detail see 
         //             name:'styles',
         //             test: /\.css$/,  
@@ -91,6 +91,7 @@ const prodConfig = {
             }
         }),
         new AddAssetHtmlWebpackPlugin({        //注意，一定要放到HtmlWebpackPlugin后面；
+            // filepath: require.resolve('../dll/vendors.dll.js')
             filepath:path.resolve(__dirname,'../dll/vendors.dll.js')   
         }), 
         new BundleAnalyzerPlugin({               //用于生成打包详情可视化预览图；detail see: https://github.com/webpack-contrib/webpack-bundle-analyzer

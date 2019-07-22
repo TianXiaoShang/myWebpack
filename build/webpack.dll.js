@@ -7,7 +7,7 @@ module.exports = {
     },
     output:{
         filename:'[name].dll.js',      
-        library:'[name]',              //将打包的库用他的名字作为变量名暴露出去供使用；
+        library:'[name]',              //将打包的库用他的名字作为变量名暴露出去供使用，也就是vendors；
         path: path.resolve(__dirname, '../dll'),         //打包的公共库放到一个单独的文件夹中
     }
 }
