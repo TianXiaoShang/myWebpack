@@ -1,16 +1,18 @@
 require('../css/index.css');        //两种模块化规范都可以
 import '../css/myStylus.styl';      //两种模块化规范都可以
+import _ from 'lodash'              //特别实用的一个库，npm i lodash --save
+// import "@babel/polyfill"         //配合babel-lader进行一些高级语法转低级语法的弥补(一些低版本浏览器不存在的特性),而事实上我们配置了"useBuiltIns": "usage" 后会自动引入到业务代码，业务代码中我们不用手动引入！
 const $ = require('jquery');
 
-$('.tab-item').on('click', function (e) {
 
+
+$('.tab-item').on('click', function (e) {
     $('.tab-item').removeClass('tab-item-actve')
     $(e.currentTarget).addClass('tab-item-actve')
 
     var type = e.target.getAttribute('type')
     myScrollTo(type, 500)
 })
-
 function myScrollTo(type) {
     var myIndex;
     var heights = [];
@@ -63,6 +65,5 @@ function scrollStart(y) {
     },1);
 }
 
-
-
-
+console.log(1)
+console.log(_.join(['a','b','c'],'***'))    
