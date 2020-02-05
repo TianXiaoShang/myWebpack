@@ -65,7 +65,7 @@ const devConfig = {
                         outputPath: 'imgs/',                //图片的输出地址，相对于output.path的地址（也就是输出文件夹下创建一个imgs文件夹存放图片）
                         publicPath: './imgs/',              //引用该文件的路径。
                         limit: 8 * 1024,                    //限制文件的大小 8k
-                        name: '[name].[ext]'         //打包后的命名规则
+                        name: '[name].[ext]'                //打包后的命名规则
                     }
                 }
             },
@@ -74,7 +74,19 @@ const devConfig = {
     plugins: [
         new HtmlWebpackPlugin({                         //用于自动在dist生成html，  （npm i html-webpack-plugin -D）
             filename: 'index.html',                     //天坑，这里在run dev时不能使用html/home.html    打包的时候可以按照自定义来打包。但是跑服务器不能加层级也不能改名字;
-            template: './index.html',                   //模板html，会往模板html注入js
+            template: './src/html/index.html',                   //模板html，会往模板html注入js
+            // hash:true,                                  //消除缓存，添加版本号
+            chunks: ["index"],                                
+            minify: {
+                removeComments: true,                   //去掉注释   可以自己改
+                collapseWhitespace: true,               //去掉空格   压缩html
+            }
+        }),
+        new HtmlWebpackPlugin({                         //用于自动在dist生成html，  （npm i html-webpack-plugin -D）
+            filename: 'index.html',                     //天坑，这里在run dev时不能使用html/home.html    打包的时候可以按照自定义来打包。但是跑服务器不能加层级也不能改名字;
+            template: './src/html/about.html',                   //模板html，会往模板html注入js
+            // hash:true,                               //消除缓存，添加版本号  
+            chunks: ["about"],                                
             minify: {
                 removeComments: true,                   //去掉注释   可以自己改
                 collapseWhitespace: true,               //去掉空格   压缩html
@@ -82,7 +94,7 @@ const devConfig = {
         }),
         new AddAssetHtmlWebpackPlugin({        //在第三方模块打包生成文件后，使用该插件在html中进行引入   npm i add-asset-html-webpack-plugin --save
             // filepath: require.resolve('../dll/vendors.dll.js')
-            filepath: path.resolve(__dirname,'../dll/vendors.dll.js')    //往生成的html中加入指定（库打包）内容
+            filepath: path.resolve(__dirname,'../dll/vendors.dll.js'),    //往生成的html中加入指定（库打包）内容
         }), 
         new Webpack.HotModuleReplacementPlugin(),       //使用HMR技术，用于支持热更新；需要在devServer中配置hot
         // -->对于css，样式改变不需要刷新页面，自动替换；
@@ -111,7 +123,8 @@ const devConfig = {
                 },
                 changeOrigin:true                        //解决服务端在cors对origin做的限制
             }                                
-        }
+        },
+        // watchContentBase: true,
     }
 }
 

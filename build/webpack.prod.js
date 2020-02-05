@@ -84,16 +84,28 @@ const prodConfig = {
         }),
         new HtmlWebpackPlugin({                  //此处注释见开发环境配置，以开发环境配置为主，不重复注释
             filename: 'html/home.html',           
-            template: './index.html',            
+            template: './src/html/index.html',   
+            chunks: ["index"],                                
             minify: {
                 removeComments: true,                
                 collapseWhitespace: true,             
             }
         }),
-        new AddAssetHtmlWebpackPlugin({        //注意，一定要放到HtmlWebpackPlugin后面；
-            // filepath: require.resolve('../dll/vendors.dll.js')
-            filepath:path.resolve(__dirname,'../dll/vendors.dll.js')   
-        }), 
+        new HtmlWebpackPlugin({                         //用于自动在dist生成html，  （npm i html-webpack-plugin -D）
+            filename: 'html/about.html',                //天坑，这里在run dev时不能使用html/home.html    打包的时候可以按照自定义来打包。但是跑服务器不能加层级也不能改名字;
+            template: './src/html/about.html',                   //模板html，会往模板html注入js
+            // hash:true,                               //消除缓存，添加版本号  
+            chunks: ["about"],                                
+            minify: {
+                removeComments: true,                   //去掉注释   可以自己改
+                collapseWhitespace: true,               //去掉空格   压缩html
+            }
+        }),
+        // 这里注释是因为项目在index引入了jquery跟lodash，不单独注入也能用
+        // new AddAssetHtmlWebpackPlugin({        //注意，一定要放到HtmlWebpackPlugin后面；
+        //     filepath: require.resolve('../dll/vendors.dll.js'),
+        //     // filepath:path.resolve(__dirname,'../dll/vendors.dll.js')   
+        // }), 
         new BundleAnalyzerPlugin({               //用于生成打包详情可视化预览图；detail see: https://github.com/webpack-contrib/webpack-bundle-analyzer
             analyzerMode:'disabled',             //默认server模式在服务器下打开，可以选择static模式生成静态html,或者disabled禁用；
             generateStatsFile:false,             //默认fale，开启后，会生成state.json文件，也可以直接在命令行生成，详情见package.json中build命令orwebpack.md；

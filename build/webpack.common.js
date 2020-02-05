@@ -14,6 +14,7 @@ const devConfig = require('./webpack.dev.js');
 const commonConfig = {
     entry: {
         index: path.join(__dirname, '../src/js/index.js'),      //也可以写多个入口，html引入多个打包后的js；
+        about: path.join(__dirname, '../src/js/about.js'),      //也可以写多个入口，html引入多个打包后的js；
     },
     resolve:{
         alias:{
@@ -84,9 +85,10 @@ const commonConfig = {
             },
             {
                 test: /\.(htm|html)$/i,
-                use: {
-                    loader: 'html-withimg-loader',
-                }
+                use: [
+                    // 'raw-loader',
+                    'html-withimg-loader',
+                ]
             }
         ],
     },
@@ -96,7 +98,7 @@ const commonConfig = {
         new CleanWebpackPlugin(),                //用于在重新打包时删除原有代码，开发环境储存在内存中，其实开发环境没必要删除；（主要解决带hash文件没法替换的问题,另外最新版本已经不需要再基础的配置）！
         new PurifyCSSPlugin({                           //（坑）用于抽离多余的css，所以这里匹配的html跟js所有用到css的入口千万不能错，否则检测没用上就都不见了；
             paths: glob.sync([
-                path.join(__dirname, '../*.html'),      //匹配html中使用到的css
+                path.join(__dirname, '../src/html/*.html'),      //匹配html中使用到的css
                 path.join(__dirname, '../src/js/*.js')  //匹配js中使用到的css
             ]),
         }), 
@@ -193,4 +195,3 @@ module.exports = (env) => {    //由全局变量控制对应配置来打包，�
  * 详情见 webpack.prod.js 配置
  * --profile --json > stats.json
  */
-

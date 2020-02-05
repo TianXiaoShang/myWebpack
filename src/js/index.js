@@ -1,69 +1,140 @@
-require('../css/index.css');        //两种模块化规范都可以
-import '../css/myStylus.styl';      //两种模块化规范都可以
+require('../css/animate.min.css');        //两种模块化规范都可以
+require('../font/iconfont.js');
+require('../css/reset.css');
+require('../css/swiper.min.css');
+require('../js/swiper.min.js');
+import 'src/html/index.html'
+import '../css/index.styl';
+import '../css/common.styl';
 import _ from 'lodash'              //特别实用的一个库，npm i lodash --save
-// import "@babel/polyfill"         //配合babel-lader进行一些高级语法转低级语法的弥补(一些低版本浏览器不存在的特性),而事实上我们配置了"useBuiltIns": "usage" 后会自动引入到业务代码，业务代码中我们不用手动引入！
 const $ = require('jquery');
 
-
-
-$('.tab-item').on('click', function (e) {
-    $('.tab-item').removeClass('tab-item-actve')
-    $(e.currentTarget).addClass('tab-item-actve')
-
-    var type = e.target.getAttribute('type')
-    myScrollTo(type, 500)
-})
-function myScrollTo(type) {
-    var myIndex;
-    var heights = [];
-    [].slice.call($('.card-aline')).forEach(function(ele, index){
-        if (ele.id == type) {
-            myIndex = index;
-        }
-        heights.push($(ele).height())
-    })
-    window.allHeight = heights.reduce(function(a,b){return a+b})    //滚动内容总高，用于计算可滚动高度
-    var arr = heights.slice(0, myIndex)
-    var y;
-    y = arr.length != 0 ? arr.reduce(function (a, b)  {return a + b}) : 0
-    scrollStart(y)
+function scrollnumber(element, cssName, offset = 80) {
+    var a, b, c, d;
+    d = $(element).offset().top;
+    a = d + offset;
+    b = $(window).scrollTop();
+    c = $(window).height();
+    if (b + c > a) {
+        $(element).removeClass('animatEl');
+        $(element).addClass(cssName);
+    }
 }
 
-window.timer = '';
+// 滚动监听执行动画
+function scrollfun() {
+    scrollnumber(".poster-people", 'animated fadeInUp');
+    scrollnumber(".poster-info", 'animated lightSpeedIn');
 
-function scrollStart(y) {
-    clearInterval(timer);
-    var isHeight = $('.scroll-wrap').height()
-    var k = allHeight - isHeight     //最高滚动距离，总高度减去盒子高度
+    scrollnumber(".app-main", 'animated fadeInUp');
+    scrollnumber(".app-title", 'animated fadeInLeft');
 
-    // var child = [].slice.call($('.card-aline'))
-    // var lastChild = child[child.length -1]
-    // var lastChildheight = $(lastChild).height()
-    // var k = isHeight - lastChildheight
+    scrollnumber(".finance-title", 'animated fadeInLeft');
+    scrollnumber(".finance-main", 'animated fadeInUp');
+    scrollnumber(".miniApp-main", 'animated fadeInUp');
 
-    var el = document.getElementsByClassName('scroll-wrap')[0]
-    var currentPosition = el.scrollTop ;
+    scrollnumber(".information-title", 'animated fadeInLeft');
+    scrollnumber(".information-img", 'animated fadeInUp');
+    scrollnumber(".information-skill-list-wrap", 'animated fadeInUp');
 
-    timer = setInterval(function() {
-        var el = document.getElementsByClassName('scroll-wrap')[0]
-        var currentPosition = el.scrollTop ;
-        var curPos;
-        if(Math.abs(currentPosition - y) < 7){
-            clearInterval(timer);
-            $('.scroll-wrap').scrollTop(y);
-            console.log('滚完了')
-        }else{
-            curPos = currentPosition > y ? currentPosition - 7 : currentPosition + 7;
-            if(curPos > k){    //如果大于最大可滚动高度
-                clearInterval(timer);
-                console.log('超过滚动高度，老子不滚啦！')
-                $('.scroll-wrap').scrollTop(k);
-            }else{
-                $('.scroll-wrap').scrollTop(curPos);
+    scrollnumber(".logistics-title", 'animated fadeInLeft');
+    scrollnumber(".shopMiniApp-main", 'animated fadeInUp');
+    scrollnumber(".logisticsSystem-main", 'animated fadeInUp');
+
+    scrollnumber(".teaching-title", 'animated fadeInLeft');
+    scrollnumber(".teaching-img", 'animated fadeInUp');
+    scrollnumber(".teaching-skill-list-wrap", 'animated fadeInUp');
+}
+
+$(document).ready(function (e) {
+    scrollfun();
+    $(window).scroll(function () {
+        scrollfun();
+    });
+});
+// app轮播图
+const lists = $('.app-page-item')
+const appSlider = new Swiper('.appSlider', {
+    loop: true,
+    speed: 1000,
+    effect: 'fade',
+    controller: {
+        control: appSlider,
+        inverse: true,
+        by: 'slide',
+    },
+    autoplay: {
+        disableOnInteraction: false,
+    },
+    on: {
+        slideChange: function () {
+            let currentIndex = this.activeIndex;
+            if (this.activeIndex > lists.length) {
+                currentIndex = 1
+            } else if (this.activeIndex <= 0) {
+                currentIndex = lists.length
             }
-        }
-    },1);
-}
+            $('.app-page-item').removeClass('active')
+            $(lists[currentIndex - 1]).addClass('active')
+        },
+    },
+})
 
-console.log(1)
-console.log(_.join(['a','b','c'],'***'))    
+// 鼠标放上跳转APP页面
+$('.app-page-item').on('mouseenter', (e) => {
+    for (let i = 0; i < lists.length; i++) {
+        const element = lists[i];
+        if (e.currentTarget === element) {
+            appSlider.slideTo(i + 1, 1000, false);
+        }
+    }
+})
+
+// 小程序轮播图（2个）
+var mySwiper1 = new Swiper('.sliderShowMax', {
+    // direction: 'vertical', // 垂直切换选项
+    loop: true, // 循环模式选项
+    // preventClicks:true,
+    controller: {
+        control: mySwiper1,
+        inverse: true,
+        by: 'slide',
+    },
+    // 如果需要分页器
+    pagination: {
+        el: '.swiper-pagination',
+        //   type : 'progressbar'
+    },
+    autoplay: {
+        disableOnInteraction: false,
+    },
+})
+
+
+// 教学管理轮播图
+var informationSlider = new Swiper('.informationSlider', {
+    // direction: 'vertical', // 垂直切换选项
+    loop: true, // 循环模式选项
+    // preventClicks:true,
+    controller: {
+        control: informationSlider,
+        inverse: true,
+        by: 'slide',
+    },
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+    autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+    },
+})
+//鼠标覆盖停止自动切换
+informationSlider.el.onmouseover = function () {
+    informationSlider.autoplay.stop();
+}
+//鼠标离开开始自动切换
+informationSlider.el.onmouseout = function () {
+    informationSlider.autoplay.start();
+}

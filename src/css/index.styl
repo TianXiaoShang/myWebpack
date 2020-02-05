@@ -1,0 +1,245 @@
+// iconfont
+// @import '../font/iconfont.css'
+@import './common.styl'
+
+// icon默认样式
+.icon 
+    width 1em
+    height 1em
+    vertical-align -0.15em
+    fill currentColor
+    overflow hidden
+
+
+
+
+/* 轮播图 */
+.slider-wrap
+    width 100%
+    // max-width 541px
+    overflow hidden
+    position relative
+    .sliderShowMax
+        .swiper-slide
+            width 100%
+            height 100%
+            img
+                width 100%
+                height 100%
+        .swiper-pagination>span
+            background #aaa
+
+
+// 主要样式部分
+.wrapper
+    background white
+    width 100%
+    // 校园app 
+    .app-wrap
+        .g-content-wrap
+            .app-main
+                width 100%
+                display flex
+                justify-content space-between
+                .middle-container
+                    width 307px
+                .app-pages-container
+                    width 28%
+                    padding 40px 0
+                    .app-page-item
+                        position relative
+                        padding 12px 80px 6px 6px
+                        box-sizing border-box
+                        text-align right
+                        margin-bottom 40px
+                        cursor pointer
+                        border-radius 10px
+                        // transition all 1s
+                        &.active
+                            border 1px solid  #5c85fe
+                            h3
+                                color #3468FE
+                        .icon-wrap
+                            position absolute
+                            right 6px
+                            top 6px
+                            display flex
+                            justify-content center
+                            align-items center
+                            width 42px
+                            height 42px
+                            background #F0F5FF
+                            border-radius 50%
+                            font-size 22px
+                        h3
+                            font-weight 600
+                            font-size 18px
+                            margin-bottom 10px
+                            color #535252
+                        p
+                            width 100%
+                            font-size 15px
+                            line-height 28px
+                            height 56px
+                            color #6F6F6F
+                            font-weight 300
+                            display -webkit-box
+                            -webkit-box-orient vertical
+                            -webkit-line-clamp 2
+                            overflow hidden
+                .right-container
+                    .app-page-item
+                        padding 12px 6px 6px 80px
+                        text-align left
+                        .icon-wrap
+                            left 6px
+                            right auto
+    // 学生财务管理
+    .finance-wrap
+        position relative
+        .bg-img-wrap
+            position absolute
+            left 0
+            top 200px
+            width 30%
+            min-width 400px
+            img
+                width 100%
+            &.minApp-img
+                bottom 0
+                top auto
+                right 0
+                left auto
+        .g-content-wrap
+            position relative
+            z-index 9
+            .finance-container
+                display flex
+                align-items center
+                justify-content space-between
+                h2
+                    font-size 34px
+                    font-weight 800
+                    color #535252
+                .img-wrap,
+                .describe-wrap
+                    width 50%
+                    .slider-wrap
+                        max-width 541px !important
+                .describe-wrap
+                    padding-left 150px
+                    .info
+                        margin-top 20px
+                        color #6F6F6F
+                        font-size 15px
+                        line-height 30px
+                        display -webkit-box
+                        -webkit-box-orient vertical
+                        -webkit-line-clamp 5
+                        overflow hidden
+                    .tags-list
+                        margin-top 20px
+                        color #6F6F6F
+                        font-size 16px
+                        line-height 40px
+                        li
+                            width 50%
+                            box-sizing border-box
+                            display inline-flex
+                            align-items center
+                            .icon
+                                background none
+                                font-size 30px
+                                margin-right 8px
+                            span 
+                                flex 1
+                                overflow hidden
+                                text-overflow ellipsis
+                                white-space nowrap
+            .bottom-container
+                margin-top 80px
+                .img-wrap
+                    display flex
+                    justify-content flex-end
+                li
+                    width 100% !important
+    // 学生信息管理
+    .bg-img-content
+        margin-top 80px
+        padding-top 120px
+        background-image url('../image/学生信息背景.png')
+        background-size cover
+        background-repeat no-repeat
+        background-position center
+        &.teaching-wrap
+            background-image url('../image/教学背景1.png')
+            padding-bottom 10px
+            .teaching-title
+                color white
+            .skill-item
+                width 31.2% !important
+            .information-img
+                margin-bottom 0 !important
+            .slider-wrap
+                overflow visible
+                width 100%
+                .informationSlider
+                    overflow hidden !important 
+            .swiper-button-next
+                right -40px !important
+            .swiper-button-prev
+                left -40px !important
+        .information-title
+            color white
+        .information-main
+            max-width 1100px
+            margin 0 auto
+            display flex
+            flex-direction column
+            justify-content center
+            margin-bottom 80px                
+            .information-img
+                width 100%
+                margin-top 40px
+                margin-bottom -80px
+            .skill-list-wrap
+                box-sizing border-box
+                width 100%
+                padding 0 50px
+                .aline-items
+                    margin-bottom 30px
+                    display flex
+                    flex-wrap wrap
+                    justify-content space-between
+                .skill-item
+                    font-size 15px
+                    width 26%
+                    color white
+                    display flex
+                    .icon
+                        background none
+                        font-size 20px
+                        margin-right 8px
+                    .info
+                        flex 1
+                        h6
+                            font-weight 600
+                            margin-bottom 10px
+                        p
+                            line-height 28px
+                            display -webkit-box
+                            -webkit-box-orient vertical
+                            -webkit-line-clamp 4
+                            overflow hidden
+                    
+
+
+            
+        // .bg-img
+        //     width 100%
+        //     height 1082px
+        // .g-content-wrap
+            // position absolute
+            // top 0
+            // left 50%
+            // transform translateX(-50%)

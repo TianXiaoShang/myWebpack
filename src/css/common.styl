@@ -1,0 +1,121 @@
+// 全局变量
+CONTENMAXW = 1300PX
+CONTENMINW = 900PX
+
+// 需要执行动画的元素（首先隐藏）
+.animatEl
+    visibility hidden !important
+
+// 全局title样式
+.g-title-wrap
+    width 100%
+    color #384358
+    padding-top 8vw
+    text-align center
+    h1
+        font-size 48px
+        font-weight 800
+    span 
+        font-size 21px
+        font-weight 300
+// 导航菜单公共样式
+.navs
+    li 
+        float left
+        margin-left 40px
+        a
+            text-decoration none
+            color rgb(230,230,230)
+            &:hover
+                color white
+        &:after
+            content ''
+            display block
+            clear both
+
+// 全局content样式
+.g-wrap-box
+    position relative
+    width 100%
+    min-width CONTENMINW
+    .g-content-wrap
+        margin 0 auto
+        max-width CONTENMAXW
+        min-width CONTENMINW
+        padding 0 10px
+        .g-main-wrap
+            padding 80px 0 40px 0
+// 页脚
+.footer-wrap
+    width 100%
+    position absolute
+    bottom 0
+    background rgba(1,29,61,0.3)
+    height 65px
+    .g-content-wrap
+        display flex
+        height 100%
+        justify-content space-between
+        align-items center
+        font-size 14px
+        .info
+            color white
+        .navs
+            font-size 14px
+// 顶部banner
+.head-wrap
+    .bg-img
+        min-width CONTENMINW
+        width 100%
+    .content-wrap
+        z-index 5
+        position absolute
+        box-sizing border-box
+        left 50%
+        transform translateX(-50%)
+        top 0
+        margin 0 auto
+        width 100%
+        display flex
+        align-items center
+        flex-direction column
+        justify-content center
+        height 100%
+        @media screen and (max-width: CONTENMINW)
+            left 0
+            transform translateX(0%)
+        .title-wrap
+            position absolute
+            top 0
+            padding 0 10px
+            left 0
+            width 100%
+            display flex
+            height 70px
+            align-items center
+            justify-content space-between
+            .logo-wrap
+                font-size 14px
+                img 
+                    width 93px
+                    cursor pointer
+                    margin-right 20px
+        .poster-wrap
+            width 100%
+            display flex
+            align-items center
+            justify-content space-between
+            color white
+            img
+                width 45%
+                min-width 350px
+            .info
+                width 39%
+                h2
+                    font-size 40px
+                    margin-bottom 10px
+                p
+                    font-size 22px
+                    opacity 0.9
+                    font-weight 300
+                    line-height 36px

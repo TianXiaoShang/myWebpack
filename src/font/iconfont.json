@@ -1,0 +1,296 @@
+{
+  "id": "1612562",
+  "name": "官网康展职教页面",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "12820263",
+      "name": "AI排课",
+      "font_class": "AIpaike",
+      "unicode": "e670",
+      "unicode_decimal": 58992
+    },
+    {
+      "icon_id": "12820264",
+      "name": "班级管理",
+      "font_class": "banjiguanli",
+      "unicode": "e671",
+      "unicode_decimal": 58993
+    },
+    {
+      "icon_id": "12820265",
+      "name": "出入校管理",
+      "font_class": "churuxiaoguanli",
+      "unicode": "e672",
+      "unicode_decimal": 58994
+    },
+    {
+      "icon_id": "12820268",
+      "name": "对账",
+      "font_class": "duizhang",
+      "unicode": "e673",
+      "unicode_decimal": 58995
+    },
+    {
+      "icon_id": "12820281",
+      "name": "教学视频",
+      "font_class": "jiaoxueshipin",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    },
+    {
+      "icon_id": "12820286",
+      "name": "课表查看",
+      "font_class": "kebiaochakan",
+      "unicode": "e678",
+      "unicode_decimal": 59000
+    },
+    {
+      "icon_id": "12820289",
+      "name": "欠费提醒",
+      "font_class": "qianfeitixing",
+      "unicode": "e679",
+      "unicode_decimal": 59001
+    },
+    {
+      "icon_id": "12820291",
+      "name": "收费标准管理",
+      "font_class": "shoufeibiaozhunguanli",
+      "unicode": "e67a",
+      "unicode_decimal": 59002
+    },
+    {
+      "icon_id": "12820293",
+      "name": "收支记录管理",
+      "font_class": "shouzhijiluguanli",
+      "unicode": "e67b",
+      "unicode_decimal": 59003
+    },
+    {
+      "icon_id": "12820296",
+      "name": "收支项目管理",
+      "font_class": "shouzhixiangmuguanli",
+      "unicode": "e67c",
+      "unicode_decimal": 59004
+    },
+    {
+      "icon_id": "12820298",
+      "name": "手机",
+      "font_class": "shouji",
+      "unicode": "e67d",
+      "unicode_decimal": 59005
+    },
+    {
+      "icon_id": "12820299",
+      "name": "刷脸",
+      "font_class": "shualian",
+      "unicode": "e67e",
+      "unicode_decimal": 59006
+    },
+    {
+      "icon_id": "12820301",
+      "name": "文件管理",
+      "font_class": "wenjianguanli",
+      "unicode": "e67f",
+      "unicode_decimal": 59007
+    },
+    {
+      "icon_id": "12820303",
+      "name": "消费充值",
+      "font_class": "xiaofeichongzhi",
+      "unicode": "e680",
+      "unicode_decimal": 59008
+    },
+    {
+      "icon_id": "12820306",
+      "name": "消息通知",
+      "font_class": "xiaoxitongzhi",
+      "unicode": "e681",
+      "unicode_decimal": 59009
+    },
+    {
+      "icon_id": "12820307",
+      "name": "宿舍管理",
+      "font_class": "susheguanli",
+      "unicode": "e682",
+      "unicode_decimal": 59010
+    },
+    {
+      "icon_id": "12820308",
+      "name": "宿舍考勤",
+      "font_class": "sushekaoqin",
+      "unicode": "e683",
+      "unicode_decimal": 59011
+    },
+    {
+      "icon_id": "12820311",
+      "name": "学生APP",
+      "font_class": "xueshengAPP",
+      "unicode": "e684",
+      "unicode_decimal": 59012
+    },
+    {
+      "icon_id": "12820312",
+      "name": "学生基础信息管理",
+      "font_class": "xueshengjichuxinxiguanli",
+      "unicode": "e685",
+      "unicode_decimal": 59013
+    },
+    {
+      "icon_id": "12820313",
+      "name": "学生日志",
+      "font_class": "xueshengrizhi",
+      "unicode": "e686",
+      "unicode_decimal": 59014
+    },
+    {
+      "icon_id": "12820320",
+      "name": "学生收费情况管理",
+      "font_class": "xueshengshoufeiqingkuangguanli",
+      "unicode": "e687",
+      "unicode_decimal": 59015
+    },
+    {
+      "icon_id": "12820322",
+      "name": "学生状态",
+      "font_class": "xueshengzhuangtai",
+      "unicode": "e688",
+      "unicode_decimal": 59016
+    },
+    {
+      "icon_id": "12820372",
+      "name": "学校、校区管理",
+      "font_class": "xuexiaoxiaoquguanli",
+      "unicode": "e689",
+      "unicode_decimal": 59017
+    },
+    {
+      "icon_id": "12820387",
+      "name": "一卡通",
+      "font_class": "yikatong",
+      "unicode": "e68c",
+      "unicode_decimal": 59020
+    },
+    {
+      "icon_id": "12820389",
+      "name": "专业年级管理",
+      "font_class": "zhuanyenianjiguanli",
+      "unicode": "e68d",
+      "unicode_decimal": 59021
+    },
+    {
+      "icon_id": "12820613",
+      "name": "考试系统",
+      "font_class": "kaoshixitong",
+      "unicode": "e68f",
+      "unicode_decimal": 59023
+    },
+    {
+      "icon_id": "12822200",
+      "name": "1电子收据",
+      "font_class": "dianzishouju",
+      "unicode": "e690",
+      "unicode_decimal": 59024
+    },
+    {
+      "icon_id": "12822201",
+      "name": "1挂失",
+      "font_class": "guashi",
+      "unicode": "e691",
+      "unicode_decimal": 59025
+    },
+    {
+      "icon_id": "12822203",
+      "name": "1交易日志",
+      "font_class": "jiaoyirizhi",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    },
+    {
+      "icon_id": "12822205",
+      "name": "1考试刷题",
+      "font_class": "kaoshishuati",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
+      "icon_id": "12822208",
+      "name": "1学校管理",
+      "font_class": "xuexiaoguanli",
+      "unicode": "e694",
+      "unicode_decimal": 59028
+    },
+    {
+      "icon_id": "12822210",
+      "name": "1学校缴费",
+      "font_class": "xuexiaojiaofei",
+      "unicode": "e695",
+      "unicode_decimal": 59029
+    },
+    {
+      "icon_id": "12926148",
+      "name": "学校、校区管理",
+      "font_class": "xuexiaoxiaoquguanli-copy",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "12926157",
+      "name": "专业年级管理",
+      "font_class": "zhuanyenianjiguanli-copy",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "12926158",
+      "name": "学生状态",
+      "font_class": "xueshengzhuangtai-copy",
+      "unicode": "e698",
+      "unicode_decimal": 59032
+    },
+    {
+      "icon_id": "12926159",
+      "name": "班级管理",
+      "font_class": "banjiguanli-copy",
+      "unicode": "e699",
+      "unicode_decimal": 59033
+    },
+    {
+      "icon_id": "12926160",
+      "name": "学生日志",
+      "font_class": "xueshengrizhi-copy",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "12926161",
+      "name": "学生基础信息管理",
+      "font_class": "xueshengjichuxinxiguanli-copy",
+      "unicode": "e69b",
+      "unicode_decimal": 59035
+    },
+    {
+      "icon_id": "12926162",
+      "name": "考试系统",
+      "font_class": "kaoshixitong-copy",
+      "unicode": "e69c",
+      "unicode_decimal": 59036
+    },
+    {
+      "icon_id": "12926163",
+      "name": "AI排课",
+      "font_class": "AIpaike-copy",
+      "unicode": "e69d",
+      "unicode_decimal": 59037
+    },
+    {
+      "icon_id": "12926164",
+      "name": "文件管理",
+      "font_class": "wenjianguanli-copy",
+      "unicode": "e69e",
+      "unicode_decimal": 59038
+    }
+  ]
+}

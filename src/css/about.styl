@@ -1,0 +1,221 @@
+// // 全局变量
+// CONTENMAXW = 1300PX
+// CONTENMINW = 900PX
+@import './common.styl'
+
+@keyframes myScale 
+    0%
+        transform scale(1)
+    50%
+        transform scale(1.1)
+    100%
+        transform scale(1)
+
+
+
+.wrapper
+    // banner
+    .g-main-wrap
+        padding-bottom 0px !important
+    .head-wrap
+        height 460px 
+        background linear-gradient(to right, rgb(72, 60, 231) 0%,rgb(78, 64, 244) 50%, rgb(80, 71, 242) 100%);
+        .content-wrap
+            position relative 
+            transform translateX(0%) 
+            left 0 
+            // display block 
+            .poster-wrap
+                margin-top 70px
+                img
+                    width 40% 
+                .info
+                    width 39%
+                    h2
+                        font-size 34px 
+                        margin-bottom 10px
+                    p
+                        font-size 14px 
+                        line-height 26px
+    .profile-wrap
+        .profile-main
+            display flex
+            align-items center
+            justify-content space-between
+            .img-wrap,
+            .describe-wrap
+                width 50%
+            .img-wrap
+                animation myScale 4s infinite
+            .describe-wrap
+                max-width 543px
+                margin-right 50px
+                font-size 17px 
+                color #717171
+                line-height 36px
+                display -webkit-box
+                -webkit-box-orient vertical
+                -webkit-line-clamp 6
+                overflow hidden
+    .evolution-wrap
+        .g-main-wrap
+            padding 0 !important
+            .evolution-main
+                position relative
+                display flex
+                font-size 0
+                justify-content center
+                .img-wrap
+                    max-width 1100px
+                    position relative
+                    img
+                        width 100%
+                    .descrip-wrap
+                        font-size 16px
+                        position absolute
+                        left 0
+                        top 0
+                        width 100%
+                        height 100%
+                        .info-item
+                            position absolute
+                            transition all 0.5s
+                            &:hover
+                                transform scale(1.1)
+                            .date
+                                .year
+                                    font-weight 600
+                                    color #5C85FE
+                                    font-size 30px
+                                .month
+                                    font-size 14px
+                                    font-weight 600
+                                    color #444
+                            .title
+                                color #6F6F6F
+                                font-size 18px
+                                margin-bottom 4px
+                            .detail
+                                color #8C8C8C
+                                font-size 14px
+                            &.item1,
+                            &.item2,
+                            &.item3
+                                text-align right
+                            &.item1
+                                left 44%
+                                top 24%
+                            &.item2
+                                left 12%
+                                top 36%
+                            &.item3
+                                left 14%
+                                top 54%
+                            &.item4
+                                left 76%
+                                top 40%
+                            &.item5
+                                left 57%
+                                top 57%
+                            &.item6
+                                left 48%
+                                top 72%
+    .member-wrap
+        .member-main
+            padding-bottom 80px
+            .slider-wrap
+                width 100%
+                .swiper-slide
+                    display flex
+                    cursor pointer
+                    background white
+                    box-sizing border-box
+                    position relative
+                    &:after
+                        content ''
+                        width 100%
+                        height 76%
+                        position absolute
+                        bottom 0
+                        background #F9F9F9
+                    .cover-wrap
+                        position relative
+                        z-index 1    
+                        width 30%
+                        min-width 380px
+                        text-align center
+                        margin-bottom 50px
+                        img
+                            width 70%
+                            cursor pointer
+                            transition all 0.5s
+                            &:hover
+                                transform scale(1.1);
+                    .info-wrap
+                        position relative
+                        z-index 1
+                        width 70%
+                        box-sizing border-box
+                        padding 0 112px 0 0px
+                        .title
+                            .name 
+                                font-size 38px
+                                color #535252
+                                margin-right 20px
+                            .job
+                                font-size 22px
+                                color #8C8C8C
+                        .detail
+                            margin-top 60px
+                            color #717171
+                            font-size 18px
+                            line-height 34px
+                            padding-bottom 20px
+                            display -webkit-box
+                            -webkit-box-orient vertical
+                            -webkit-line-clamp 5
+                            overflow hidden
+            .member-list
+                width 100%
+                ul
+                    display flex
+                    justify-content space-around
+                    padding 20px 0
+                    li
+                        padding 10px
+                        display flex
+                        flex-direction column
+                        justify-content center
+                        width 170px
+                        align-items center
+                        transition all 0.5s
+                        cursor pointer
+                        border-radius 10px
+                        &:hover
+                            background rgb(250,250,250)
+                            transform scale(1.1)
+                        img
+                            width 90px
+                            margin-bottom 10px
+                        .name
+                            color #535252
+                            font-size 20px
+                            line-height 30px
+                            font-weight 600
+                        .job
+                            color #717171
+                            font-size 16px
+                            line-height 30px
+    .footer-wrap
+        background #122A92
+        min-width CONTENMINW !important     
+        position relative !important  
+        .g-content-wrap
+            padding 0 10px
+            box-sizing border-box
+            max-width CONTENMAXW !important
+            min-width CONTENMINW !important     
+            margin 0 auto            
+                    
+                
+        
